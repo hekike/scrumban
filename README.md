@@ -18,6 +18,10 @@ Experimental Trello like real-time kanban board with technologies like:
 - Redux
 - MQTT
 
+**docs**
+
+- swagger
+
 ## Why?
 
 I know there are too many existing kanban boards already available.
