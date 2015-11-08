@@ -1,7 +1,5 @@
 'use strict'
 
-const thinky = require('../../../models/thinky')
-const Errors = thinky.Errors
 const User = require('../../../models/user')
 
 /**
@@ -9,10 +7,7 @@ const User = require('../../../models/user')
 */
 module.exports = function *() {
   try {
-    yield User
-      .get('fake-id')
-      .run()
-      .catch(Errors.DocumentNotFound, () => null)
+    yield User.count().execute()
   } catch (err) {
     this.status = 500
     this.body = {

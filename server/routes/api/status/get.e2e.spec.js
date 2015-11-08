@@ -14,8 +14,8 @@ describe('GET /api/status', function () {
   })
 
   it('should return with error', function * () {
-    this.sandbox.stub(User, 'get').returns({
-      run: () => {
+    this.sandbox.stub(User, 'count').returns({
+      execute: () => {
         throw new Error('my error')
       }
     })
