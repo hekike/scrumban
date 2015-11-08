@@ -17,6 +17,7 @@ describe('POST /api/user/login', function () {
       firstName: 'John',
       lastName: 'Doe'
     })
+    yield user.hashPassword()
     user = yield user.save()
   })
 
