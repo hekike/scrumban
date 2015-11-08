@@ -1,3 +1,5 @@
+'use strict'
+
 const thunkify = require('thunkify')
 const joi = require('joi')
 const validate = thunkify(joi.validate)

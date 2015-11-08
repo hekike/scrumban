@@ -21,6 +21,10 @@ if (!process.env.APP_KEYS) {
   logger.warn('security vulnerability: APP_KEYS is not defined')
 }
 
+if (!process.env.PW_SECRET) {
+  logger.warn('security vulnerability: PW_SECRET is not defined')
+}
+
 // env
 config.env = process.env.NODE_ENV
 config.isTest = config.env === 'test'
@@ -37,6 +41,10 @@ config.appKeys = process.env.APP_KEYS ? process.env.APP_KEYS.split(',')
 config.jwt = {
   secret: process.env.JWT_SECRET || 'vroYaHLFcW6m6d',
   ttl: 60 * 60 // 1 hour
+}
+
+config.password = {
+  secret: process.env.PW_SECRET || 'enNxJGC8vekhT6'
 }
 
 // satic

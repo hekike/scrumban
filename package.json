@@ -28,6 +28,8 @@
     "koa-jwt": "^1.1.1",
     "koa-router": "^5.2.3",
     "koa-static": "^1.5.2",
+    "scrypt": "^5.4.1",
+    "thinky": "^2.1.11",
     "thunkify": "^2.1.2",
     "winston": "^2.1.0"
   },

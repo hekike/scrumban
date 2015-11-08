@@ -17,10 +17,11 @@ const jwtMiddleware = jwt({
  * Public endpoints
  */
 router.public.get('/api/status', require('./api/status/get'))
+router.public.post('/api/user', require('./api/user/create'))
 
 /**
  * Secured endpoints
  */
-router.secured.post('/api/user', jwtMiddleware, require('./api/user/create'))
+// router.secured.post('/api/user', jwtMiddleware, require('./api/user/create'))
 
 module.exports = router
