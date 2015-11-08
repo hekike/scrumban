@@ -1,0 +1,45 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: 'Srumban API'
+
+# Endpoints
+paths:
+  /user:
+    post:
+      description: |
+        Create `User` object.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: a user
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        201:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/User"
+# Definitions
+definitions:
+  User:
+    type: object
+    required:
+      - id
+      - email
+      - password
+      - firstName
+      - lastName
+    properties:
+      id:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+      firstName:
+        type: string
+      lastName:
+        type: string
