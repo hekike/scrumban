@@ -19,6 +19,9 @@
     "url": "https://github.com/hekike/scrumban/issues"
   },
   "homepage": "https://github.com/hekike/scrumban#readme",
+  "engines": {
+    "node": "4.2.2"
+  },
   "dependencies": {
     "joi": "^7.0.0",
     "koa": "^1.1.2",
