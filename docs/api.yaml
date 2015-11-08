@@ -21,6 +21,28 @@ paths:
           description: successful operation
           schema:
             $ref: "#/definitions/User"
+  /user/login:
+    post:
+      description: |
+        Login `User` and create session cookie.
+      parameters:
+        - name: data
+          in: body
+          description: a user
+          schema:
+            required: true
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+                format: password
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/User"
+
 # Definitions
 definitions:
   User:
