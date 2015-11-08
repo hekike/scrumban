@@ -36,7 +36,7 @@ User.define('isPasswordEqual', function (password) {
 
   const key = new Buffer(password)
   return scrypt.hash(key, hashOpts, 64, salt)
-    .then(hash => hash !== user.password)
+    .then(hash => hash.toString('base64') === user.password)
 })
 
 User.defineStatic('getView', function () {

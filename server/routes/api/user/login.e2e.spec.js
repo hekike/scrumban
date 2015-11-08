@@ -58,6 +58,34 @@ describe('POST /api/user/login', function () {
     yield Session.destroy(token)
   })
 
+  it('should reject invalid email', function * () {
+    yield request(server.listen())
+      .post('/api/user/login')
+      .send({
+        data: {
+          email: 'invalid@test.com',
+          password: 'secret'
+        }
+      })
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+      .end()
+  })
+
+  it('should reject invalid password', function * () {
+    yield request(server.listen())
+      .post('/api/user/login')
+      .send({
+        data: {
+          email: user.email,
+          password: 'invalid password'
+        }
+      })
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+      .end()
+  })
+
   it('should reject invalid payload', function * () {
     yield request(server.listen())
       .post('/api/user/login')

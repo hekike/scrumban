@@ -8,6 +8,8 @@ const routesUtils = require('../../../utils/routes')
 const schema = require('./schema').login
 const User = require('../../../models/user')
 const Session = require('../../../models/session')
+const thinky = require('../../../models/thinky')
+const Errors = thinky.Errors
 
 /**
 * Login user
@@ -18,17 +20,23 @@ module.exports = function *() {
   logger.info('login user', body.data.email)
 
   // get user by email
-  const user = yield User
-    .filter({
-      email: body.data.email
-    })
-    .uniqueResult()
-    .run()
+  let user
 
-  // invalid email
-  if (!user) {
-    logger.silly('login user not found', body.data.email)
-    this.throw(401, 'invalid email or password')
+  try {
+    user = yield User
+      .filter({
+        email: body.data.email
+      })
+      .uniqueResult()
+      .run()
+  } catch (err) {
+    if (err instanceof Errors.DocumentNotFound) {
+      // invalid email
+      logger.silly('login user not found', body.data.email)
+      this.throw(401, 'invalid email or password')
+    }
+
+    throw err
   }
 
   // invalid password

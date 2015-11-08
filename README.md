@@ -26,3 +26,22 @@ Experimental Trello like real-time kanban board with technologies like:
 
 I know there are too many existing kanban boards already available.
 This project is much more about making some fun with shiny techs, but if you like it feel free to use. But remember this project is may not production ready.
+
+## Run
+
+```
+npm install
+npm start
+```
+
+## Test
+
+```
+npm test
+```
+
+## Coverage
+
+```
+npm run coverage
+```

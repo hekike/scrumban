@@ -2,8 +2,9 @@
   "name": "scrumban",
   "version": "1.0.0",
   "description": "Realtime OSS Kanban board",
-  "main": "index.js",
+  "main": "server/server.js",
   "scripts": {
+    "start": "node server/server.js",
     "lint": "eslint client server config",
     "test": "npm run test-server",
     "test-server": "NODE_ENV=test TZ=utc mocha --require co-mocha $(find server -name \"*.spec.js\")",
