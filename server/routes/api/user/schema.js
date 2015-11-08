@@ -11,6 +11,14 @@ const create = joi.object({
   })
 })
 
+const login = joi.object({
+  data: joi.object({
+    password: joi.string().required(),
+    email: joi.string().email().required()
+  })
+})
+
 module.exports = {
-  create
+  create,
+  login
 }

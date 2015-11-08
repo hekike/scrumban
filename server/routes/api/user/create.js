@@ -1,19 +1,10 @@
 'use strict'
 
 const logger = require('winston')
-const scrypt = require('scrypt')
 
-const config = require('../../../../config/server')
 const routesUtils = require('../../../utils/routes')
 const schema = require('./schema').create
 const User = require('../../../models/user')
-
-const salt = new Buffer(config.password.secret)
-const hashOpts = {
-  N: 16384,
-  r: 8,
-  p: 1
-}
 
 /**
 * Create user
@@ -23,14 +14,23 @@ module.exports = function *() {
 
   logger.info('create user', body.data.email)
 
-  // hash password
-  const key = new Buffer(body.data.password)
-  const password = yield scrypt.hash(key, hashOpts, 64, salt)
+  // check for conflict
+  const count = yield User
+    .filter({
+      email: body.data.email
+    })
+    .count()
+    .execute()
 
-  body.data.password = password.toString('base64')
+  // conflict
+  if (count > 0) {
+    logger.silly('user\s email is reserved', body.data.email)
+    this.throw(409, 'email address is reserved')
+  }
 
   // create user
   let user = new User(body.data)
+  yield user.hashPassword()
   user = yield user.save()
 
   // do not send pw hash back

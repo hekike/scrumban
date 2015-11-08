@@ -46,6 +46,40 @@ describe('POST /api/user', function () {
     yield user.delete()
   })
 
+  describe('with existing email', () => {
+    let user
+
+    beforeEach(function *() {
+      user = new User({
+        email: 'example@test.com',
+        password: 'secret',
+        firstName: 'John',
+        lastName: 'Doe'
+      })
+      user = yield user.save()
+    })
+
+    afterEach(function *() {
+      yield user.delete()
+    })
+
+    it('should reject create', function * () {
+      yield request(server.listen())
+        .post('/api/user')
+        .send({
+          data: {
+            email: user.email,
+            firstName: 'John',
+            lastName: 'Doe',
+            password: 'secret'
+          }
+        })
+        .expect(409)
+        .expect('Content-Type', /application\/json/)
+        .end()
+    })
+  })
+
   it('should reject invalid payload', function * () {
     yield request(server.listen())
       .post('/api/user')

@@ -18,6 +18,7 @@ const jwtMiddleware = jwt({
  */
 router.public.get('/api/status', require('./api/status/get'))
 router.public.post('/api/user', require('./api/user/create'))
+router.public.post('/api/user/login', require('./api/user/login'))
 
 /**
  * Secured endpoints
