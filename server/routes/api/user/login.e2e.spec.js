@@ -12,7 +12,7 @@ describe('POST /api/user/login', function () {
 
   beforeEach(function *() {
     user = new User({
-      email: 'example@test.com',
+      email: 'test@test.com',
       password: 'secret',
       firstName: 'John',
       lastName: 'Doe'

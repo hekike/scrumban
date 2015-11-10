@@ -1,17 +1,10 @@
 const Router = require('koa-router')
-const jwt = require('koa-jwt')
+const protect = require('../utils/protect')
 
-const config = require('../../config/server')
 const router = {
   public: new Router(),
   secured: new Router()
 }
-
-const jwtMiddleware = jwt({
-  secret: config.jwt.secret,
-  key: 'customer',
-  cookie: 'sid'
-})
 
 /**
  * Public endpoints
@@ -23,6 +16,6 @@ router.public.post('/api/user/login', require('./api/user/login'))
 /**
  * Secured endpoints
  */
-// router.secured.post('/api/user', jwtMiddleware, require('./api/user/create'))
+router.secured.get('/api/user/:userId', protect, require('./api/user/getById'))
 
 module.exports = router
