@@ -60,4 +60,16 @@ describe('POST /api/team', function () {
 
     yield team.deleteAll()
   })
+
+  it('should reject invalid payload', function * () {
+    yield request(server.listen())
+      .post('/api/team')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        data: {}
+      })
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .end()
+  })
 })
