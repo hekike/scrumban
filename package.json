@@ -28,7 +28,7 @@
     "koa": "^1.1.2",
     "koa-bodyparser": "^2.0.1",
     "koa-hbs": "^0.7.0",
-    "koa-helmet": "^0.3.0",
+    "koa-helmet": "^0.4.0",
     "koa-router": "^5.2.3",
     "koa-static": "^1.5.2",
     "lodash": "^3.10.1",
