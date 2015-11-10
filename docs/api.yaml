@@ -51,6 +51,22 @@ paths:
           description: successful operation
           schema:
             $ref: "#/definitions/User"
+  /team:
+    post:
+      description: |
+        Create `Team` object.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          description: a team
+          schema:
+            $ref: "#/definitions/Team"
+      responses:
+        201:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Tean"
 
 # Definitions
 definitions:
@@ -74,3 +90,15 @@ definitions:
         type: string
       lastName:
         type: string
+  Team:
+    type: object
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      users:
+        type: array
