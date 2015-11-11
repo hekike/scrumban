@@ -1,6 +1,7 @@
 'use strict'
 
 const logger = require('winston')
+const _ = require('lodash')
 
 const Session = require('../models/session')
 const config = require('../../config/server')
@@ -10,7 +11,16 @@ const config = require('../../config/server')
  * @param {Generator} next
  */
 function * user (next) {
-  const token = this.headers.authorization.substring(7)
+  const cookieToken = this.cookies.get('sid')
+  const headerToken = _.isString(this.headers.authorization)
+    ? this.headers.authorization.substring(7) : undefined
+
+  const token = cookieToken || headerToken
+
+  if (!token) {
+    this.throw(401, 'Authorization token is missing')
+  }
+
   let session
 
   this.state.user = {

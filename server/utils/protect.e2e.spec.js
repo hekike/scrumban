@@ -28,4 +28,12 @@ describe('protect', function () {
       .expect('Content-Type', /application\/json/)
       .end()
   })
+
+  it('should reject missing token', function * () {
+    yield request(server.listen())
+      .get('/api/user/me')
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+      .end()
+  })
 })
