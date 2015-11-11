@@ -44,18 +44,13 @@ describe('POST /api/team', function () {
       .run()
 
     expect(team.users[0].id).to.be.equal(user.id)
+    expect(team.users[0].lastName).to.be.equal(user.lastName)
 
     expect(resp.body).to.be.eql({
       id: team.id,
       name: 'My Team',
       createdAt: team.createdAt.toISOString(),
-      users: [{
-        email: user.email,
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        createdAt: user.createdAt.toISOString()
-      }]
+      users: [user.id]
     })
 
     yield team.deleteAll()
