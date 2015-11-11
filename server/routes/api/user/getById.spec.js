@@ -5,6 +5,7 @@ const expect = require('chai').expect
 
 const server = require('../../../server')
 const userFixtures = require('../../../fixtures/user')
+const teamFixtures = require('../../../fixtures/team')
 
 describe('GET /api/user/:userId', function () {
   let user
@@ -45,5 +46,41 @@ describe('GET /api/user/:userId', function () {
       .expect(401)
       .expect('Content-Type', /application\/json/)
       .end()
+  })
+
+  describe('with include teams', () => {
+    let team
+
+    beforeEach(function *() {
+      team = yield teamFixtures.create([user.id])
+    })
+
+    afterEach(function *() {
+      yield teamFixtures.destroy(team)
+    })
+
+    it('should include user\'s teams', function *() {
+      const resp = yield request(server.listen())
+        .get('/api/user/me?include=teams')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+        .end()
+
+      expect(resp.body).to.be.eql({
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: user.createdAt.toISOString(),
+        teams: [
+          {
+            id: team.id,
+            name: team.name,
+            createdAt: team.createdAt.toISOString()
+          }
+        ]
+      })
+    })
   })
 })
