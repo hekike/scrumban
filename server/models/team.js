@@ -12,5 +12,6 @@ const Team = thinky.createModel('Team', {
 })
 
 Team.hasAndBelongsToMany(User, 'users', 'id', 'id')
+User.hasAndBelongsToMany(Team, 'teams', 'id', 'id')
 
 module.exports = Team

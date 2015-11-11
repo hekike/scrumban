@@ -26,7 +26,7 @@ function * createLoggedInUser () {
 }
 
 function * destroyLoggedInUser (user) {
-  yield [Session.destroyUser(user.id), user.delete()]
+  yield [Session.destroyUser(user.id), user.purge()]
 }
 
 module.exports.createLoggedInUser = createLoggedInUser

@@ -66,7 +66,16 @@ paths:
         201:
           description: successful operation
           schema:
-            $ref: "#/definitions/Tean"
+            $ref: "#/definitions/Team"
+  /team:
+    get:
+      description: |
+        Get user's `Team` objects.
+      responses:
+        201:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Team"
 
 # Definitions
 definitions:

@@ -18,5 +18,6 @@ router.public.post('/api/user/login', require('./api/user/login'))
  */
 router.secured.get('/api/user/:userId', protect, require('./api/user/getById'))
 router.secured.post('/api/team', protect, require('./api/team/create'))
+router.secured.get('/api/team', protect, require('./api/team/get'))
 
 module.exports = router

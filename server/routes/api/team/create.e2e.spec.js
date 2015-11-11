@@ -22,7 +22,7 @@ describe('POST /api/team', function () {
     yield userFixtures.destroyLoggedInUser(user)
   })
 
-  it('should create new team', function * () {
+  it('should create new team and add user to it', function * () {
     const resp = yield request(server.listen())
       .post('/api/team')
       .set('Authorization', `Bearer ${token}`)
