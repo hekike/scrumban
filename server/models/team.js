@@ -14,4 +14,21 @@ const Team = thinky.createModel('Team', {
 Team.hasAndBelongsToMany(User, 'users', 'id', 'id')
 User.hasAndBelongsToMany(Team, 'teams', 'id', 'id')
 
+/**
+* @method isMember
+* @param {String} teamId
+* @param {String} userId
+* @returns {Promise}
+*/
+Team.isMember = function (teamId, userId) {
+  return r.table('Team_User')
+    .filter({
+      Team_id: teamId,
+      User_id: userId
+    })
+    .count()
+    .run()
+    .then(result => !!result)
+}
+
 module.exports = Team

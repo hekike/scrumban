@@ -4,6 +4,7 @@ const logger = require('winston')
 const _ = require('lodash')
 
 const Session = require('../models/session')
+const Team = require('../models/team')
 const config = require('../../config/server')
 
 /**
@@ -33,6 +34,18 @@ function * user (next) {
     this.state.user.id = session.uid
   } catch (err) {
     this.throw(401, 'Invalid token')
+  }
+
+  // protect teams
+  if (this.params.teamId) {
+    // check for team - user relation
+    let isMember = yield Team.isMember(this.params.teamId, this.state.user.id)
+
+    if (!isMember) {
+      logger.warn(`board creation is forbidden for user: ${this.state.user.id} in team: ${this.params.teamId}`)
+      // we don't want to user's to guess
+      this.throw(404, 'team is not found or forbidden')
+    }
   }
 
   yield next

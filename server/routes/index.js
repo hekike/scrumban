@@ -17,7 +17,10 @@ router.public.post('/api/user/login', require('./api/user/login'))
  * Secured endpoints
  */
 router.secured.get('/api/user/:userId', protect, require('./api/user/getById'))
+
 router.secured.post('/api/team', protect, require('./api/team/create'))
 router.secured.get('/api/team', protect, require('./api/team/get'))
+
+router.secured.post('/api/team/:teamId/board', protect, require('./api/team/board/create'))
 
 module.exports = router

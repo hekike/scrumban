@@ -35,7 +35,7 @@ describe('POST /api/team', function () {
       .expect('Content-Type', /application\/json/)
       .end()
 
-    // expet
+    // expect
     const team = yield Team
       .get(resp.body.id)
       .getJoin({
