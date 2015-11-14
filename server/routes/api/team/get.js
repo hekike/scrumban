@@ -1,5 +1,7 @@
 'use strict'
 
+const _ = require('lodash')
+
 const Team = require('../../../models/team')
 const thinky = require('../../../models/thinky')
 const r = thinky.r
@@ -9,8 +11,11 @@ const r = thinky.r
 */
 module.exports = function *() {
   const userId = this.state.user.id
+  const include = _.isString(this.query.include) ? this.query.include.split(',') : []
+  const isIncludeBoards = include.indexOf('boards') > -1
 
-  const rawQuery = r
+  // user's teams
+  let rawQuery = r
     .table('Team_User')
     .getAll(userId, { index: 'User_id' })
     .innerJoin(r.table('Team'), (teamUser, team) =>
@@ -19,11 +24,29 @@ module.exports = function *() {
     .zip()
     .pluck('id', 'name')
 
+  // include team'sboards
+  if (isIncludeBoards) {
+    rawQuery = rawQuery
+      .merge(team => {
+        const boardsQuery = r.table('Board')
+          .getAll(team('id'), {
+            index: 'teamId'
+          })
+          .pluck('id', 'name')
+          .coerceTo('array')
+
+        return {
+          boards: boardsQuery
+        }
+      })
+  }
+
   const query = new thinky.Query(Team, rawQuery)
   const teams = yield query.run()
 
   this.body = teams.map(team => ({
     id: team.id,
-    name: team.name
+    name: team.name,
+    boards: isIncludeBoards ? team.boards : undefined
   }))
 }

@@ -6,6 +6,7 @@ const expect = require('chai').expect
 const server = require('../../../server')
 const userFixtures = require('../../../fixtures/user')
 const teamFixtures = require('../../../fixtures/team')
+const boardFixtures = require('../../../fixtures/board')
 
 describe('GET /api/team', function () {
   let user
@@ -60,5 +61,60 @@ describe('GET /api/team', function () {
         name: team3.name
       }
     ])
+  })
+
+  describe('with boards', () => {
+    let board1
+    let board2
+
+    beforeEach(function * () {
+      const result = yield [
+        boardFixtures.create(team1.id),
+        boardFixtures.create(team1.id)
+      ]
+
+      board1 = result[0]
+      board2 = result[1]
+    })
+
+    afterEach(function * () {
+      yield [
+        boardFixtures.destroy(board1),
+        boardFixtures.destroy(board2)
+      ]
+    })
+
+    it('should get user\'s teams and include boards', function * () {
+      const resp = yield request(server.listen())
+        .get('/api/team?include=boards')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+        .end()
+
+      expect(resp.body.length).to.be.eql(2)
+
+      expect(resp.body).to.be.containSubset([
+        {
+          id: team1.id,
+          name: team1.name,
+          boards: [
+            {
+              id: board1.id,
+              name: board1.name
+            },
+            {
+              id: board2.id,
+              name: board2.name
+            }
+          ]
+        },
+        {
+          id: team3.id,
+          name: team3.name,
+          boards: []
+        }
+      ])
+    })
   })
 })

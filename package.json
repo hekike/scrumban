@@ -24,6 +24,7 @@
     "node": "4.2.2"
   },
   "dependencies": {
+    "chai-subset": "^1.1.0",
     "joi": "^7.0.0",
     "koa": "^1.1.2",
     "koa-bodyparser": "^2.0.1",

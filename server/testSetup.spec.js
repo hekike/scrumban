@@ -3,6 +3,8 @@
 const sinon = require('sinon')
 const chai = require('chai')
 const sinonChai = require('sinon-chai')
+const chaiSubset = require('chai-subset')
+
 const winston = require('winston')
 
 const User = require('./models/user')
@@ -13,6 +15,7 @@ before(function * () {
   this.timeout(10000)
 
   chai.use(sinonChai)
+  chai.use(chaiSubset)
 
   winston.remove(winston.transports.Console)
 
