@@ -27,18 +27,14 @@ module.exports = function *() {
   // include team'sboards
   if (isIncludeBoards) {
     rawQuery = rawQuery
-      .merge(team => {
-        const boardsQuery = r.table('Board')
+      .merge(team => ({
+        boards: r.table('Board')
           .getAll(team('id'), {
             index: 'teamId'
           })
           .pluck('id', 'name')
           .coerceTo('array')
-
-        return {
-          boards: boardsQuery
-        }
-      })
+      }))
   }
 
   const query = new thinky.Query(Team, rawQuery)
