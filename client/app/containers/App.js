@@ -31,12 +31,16 @@ class App extends Component {
   renderNavbar () {
     const { user } = this.props
 
+    const loggedInNav = (
+      <Nav>
+        <NavItem href="/boards">{'boards'}</NavItem>
+      </Nav>
+    )
+
     return (
       <Navbar>
         <NavBrand><a href="#">{'Scrumban'}</a></NavBrand>
-        <Nav>
-          <NavItem href="/boards">{'boards'}</NavItem>
-        </Nav>
+        {user.get('isLogged') ? loggedInNav : null}
         <Nav navbar right>
           {user.get('isLogged') ? (<NavDropdown title={user.get('email')} id="user-menu">
             <MenuItem>{'logout'}</MenuItem>

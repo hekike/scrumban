@@ -139,7 +139,7 @@ function mapDispatchToProps (dispatch) {
 
   return {
     sendLogin: (user) => dispatch(sendLogin(user)),
-    pushState: (state, path) => dispatch(pushState)
+    pushState: (state, path) => dispatch(pushState(state, path))
   }
 }
 

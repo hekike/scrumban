@@ -33,12 +33,12 @@ function onLogin (state, action) {
   return nextState
 }
 
-export default function (state, action) {
+export default function (state = defaultState, action) {
   switch (action.type) {
     case USER_LOGIN:
       return onLogin(state, action)
 
     default:
-      return defaultState
+      return state
   }
 }

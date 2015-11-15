@@ -36,7 +36,7 @@ function onAppErrorClear (state) {
   return state.setIn(['error'], null)
 }
 
-export default function (state, action) {
+export default function (state = defaultState, action) {
   switch (action.type) {
 
     case APP_ERROR:
@@ -46,6 +46,6 @@ export default function (state, action) {
       return onAppErrorClear(state, action)
 
     default:
-      return defaultState
+      return state
   }
 }
