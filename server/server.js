@@ -5,7 +5,7 @@ const path = require('path')
 
 const koa = require('koa')
 const serve = require('koa-static')
-const hbs = require('koa-hbs')
+const sendfile = require('koa-sendfile')
 const bodyParser = require('koa-bodyparser')
 const helmet = require('koa-helmet')
 const logger = require('winston')
@@ -17,11 +17,12 @@ const routes = require('./routes')
 const NINETY_DAYS_IN_MS = 90 * 24 * 60 * 60 * 1000
 const PATH_ASSETS = path.join(__dirname, '../dist')
 const PATH_CLIENT = path.join(__dirname, '../client')
+const indexFile = path.join(config.isTest ? PATH_CLIENT : PATH_ASSETS, 'index.html')
 
 const app = koa()
 const serveMW = serve(PATH_ASSETS, config.static)
 
-// Config app and middlewares
+// config app and middlewares
 app.keys = config.appKeys
 
 app.use(bodyParser())
@@ -30,16 +31,16 @@ app.use(serverUtils.errorHandler)
 
 app.use(serverUtils.conditionalMw(/^\/[images|css|scripts]/, serveMW))
 
-// Views
-app.use(hbs.middleware({
-  viewPath: config.isTest ? PATH_CLIENT : PATH_ASSETS,
-  extname: '.html',
-  disableCache: config.isTest || config.isDev
-}))
-
 // routers
 app.use(routes.public.middleware())
 app.use(routes.secured.middleware())
+
+// views
+app.use(function * (next) {
+  if (this.accepts('html', 'text/*', 'text/html')) {
+    yield* sendfile.call(this, indexFile)
+  }
+})
 
 app.use(helmet.csp({
   defaultSrc: ['\'self\'', 'herokuapp.com'],
