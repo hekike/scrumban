@@ -7,7 +7,9 @@ import { Map as ImmutableMap } from 'immutable'
 import Navbar from 'react-bootstrap/lib/Navbar'
 import NavBrand from 'react-bootstrap/lib/NavBrand'
 import Nav from 'react-bootstrap/lib/Nav'
+import NavDropdown from 'react-bootstrap/lib/NavDropdown'
 import NavItem from 'react-bootstrap/lib/NavItem'
+import MenuItem from 'react-bootstrap/lib/MenuItem'
 
 class App extends Component {
   constructor (props) {
@@ -27,11 +29,19 @@ class App extends Component {
   }
 
   renderNavbar () {
+    const { user } = this.props
+
     return (
       <Navbar>
         <NavBrand><a href="#">{'Scrumban'}</a></NavBrand>
         <Nav>
-          <NavItem eventKey={1} href="/boards">{'boards'}</NavItem>
+          <NavItem href="/boards">{'boards'}</NavItem>
+        </Nav>
+        <Nav navbar right>
+          {user.get('isLogged') ? (<NavDropdown title={user.get('email')} id="user-menu">
+            <MenuItem>{'logout'}</MenuItem>
+          </NavDropdown>)
+            : <NavItem href="/user/login">{'login'}</NavItem>}
         </Nav>
       </Navbar>
     )
@@ -57,12 +67,14 @@ App.displayName = 'App'
 App.propTypes = {
   // Injected by React Router
   children: PropTypes.node,
-  app: PropTypes.instanceOf(ImmutableMap).isRequired
+  app: PropTypes.instanceOf(ImmutableMap).isRequired,
+  user: PropTypes.instanceOf(ImmutableMap).isRequired
 }
 
 function mapStateToProps (state) {
   return {
-    app: state.app
+    app: state.app,
+    user: state.user
   }
 }
 

@@ -7,6 +7,10 @@ import {
 } from '../actions/userActions'
 
 const defaultState = fromJS({
+  id: null,
+  firstName: null,
+  lastName: null,
+  email: null,
   isLogged: false,
   isFetched: false
 })

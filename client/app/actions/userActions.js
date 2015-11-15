@@ -34,8 +34,10 @@ export function sendLogin ({ email, password }) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: email,
-        password: password
+        data: {
+          email: email,
+          password: password
+        }
       })
     })
       .then(checkFetchStatus)
