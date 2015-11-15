@@ -96,12 +96,12 @@ class UserLogin extends Component {
           <form className="col-md-12" onSubmit={onSubmit}>
             <div className="form-group">
               <label htmlFor="email">{'Email address'}</label>
-              <input type="email" valueLink={linkState('email')}
+              <input type="email" valueLink={linkState('email')} tabIndex={1}
                   className="form-control" id="email" placeholder="Enter email" />
             </div>
             <div className="form-group">
               <label htmlFor="password">{'Password'}</label>
-              <input type="password" valueLink={linkState('password')}
+              <input type="password" valueLink={linkState('password')} tabIndex={2}
                   className="form-control" id="password"
                   placeholder="Password" />
             </div>

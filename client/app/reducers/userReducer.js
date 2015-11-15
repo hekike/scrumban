@@ -3,7 +3,8 @@
 import { fromJS } from 'immutable'
 
 import {
-  USER_LOGIN
+  USER_LOGIN,
+  USER_LOGOUT
 } from '../actions/userActions'
 
 const defaultState = fromJS({
@@ -37,6 +38,10 @@ export default function (state = defaultState, action) {
   switch (action.type) {
     case USER_LOGIN:
       return onLogin(state, action)
+
+    case USER_LOGOUT: {
+      return defaultState
+    }
 
     default:
       return state

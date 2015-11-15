@@ -2,7 +2,11 @@
 
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
+import { pushState } from 'redux-router'
 import { Map as ImmutableMap } from 'immutable'
+import { onClass as classMixin } from 'react-mixin'
+import { Link } from 'react-router'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import Navbar from 'react-bootstrap/lib/Navbar'
 import NavBrand from 'react-bootstrap/lib/NavBrand'
@@ -11,9 +15,20 @@ import NavDropdown from 'react-bootstrap/lib/NavDropdown'
 import NavItem from 'react-bootstrap/lib/NavItem'
 import MenuItem from 'react-bootstrap/lib/MenuItem'
 
+import actions from '../actions'
+
 class App extends Component {
   constructor (props) {
     super(props)
+
+    this.onLogoutClick = this.onLogoutClick.bind(this)
+  }
+
+  onLogoutClick () {
+    const { pushState, logout } = this.props
+
+    logout()
+    pushState(null, '/user/login')
   }
 
   renderAppError () {
@@ -29,21 +44,24 @@ class App extends Component {
   }
 
   renderNavbar () {
+    const { onLogoutClick } = this
     const { user } = this.props
 
     const loggedInNav = (
       <Nav>
-        <NavItem href="/boards">{'boards'}</NavItem>
+        <li>
+          <Link to="/boards">{'boards'}</Link>
+        </li>
       </Nav>
     )
 
     return (
       <Navbar>
-        <NavBrand><a href="#">{'Scrumban'}</a></NavBrand>
+        <NavBrand><Link to="/">{'Scrumban'}</Link></NavBrand>
         {user.get('isLogged') ? loggedInNav : null}
         <Nav navbar right>
           {user.get('isLogged') ? (<NavDropdown title={user.get('email')} id="user-menu">
-            <MenuItem>{'logout'}</MenuItem>
+            <MenuItem onClick={onLogoutClick}>{'logout'}</MenuItem>
           </NavDropdown>)
             : <NavItem href="/user/login">{'login'}</NavItem>}
         </Nav>
@@ -66,15 +84,14 @@ class App extends Component {
   }
 }
 
+classMixin(App, PureRenderMixin)
 App.displayName = 'App'
 
-App.propTypes = {
-  // Injected by React Router
-  children: PropTypes.node,
-  app: PropTypes.instanceOf(ImmutableMap).isRequired,
-  user: PropTypes.instanceOf(ImmutableMap).isRequired
-}
-
+/**
+ * @method mapStateToProps
+ * @param {Object} state
+ * @return {Object} props
+ */
 function mapStateToProps (state) {
   return {
     app: state.app,
@@ -82,4 +99,27 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(App)
+/**
+ * @method mapDispatchToProps
+ * @param {Function} dispatch
+ * @return {Object} props
+ */
+function mapDispatchToProps (dispatch) {
+  const { logout } = actions.user
+
+  return {
+    logout: (user) => dispatch(logout()),
+    pushState: (state, path) => dispatch(pushState(state, path))
+  }
+}
+
+App.propTypes = {
+  // Injected by React Router
+  children: PropTypes.node,
+  app: PropTypes.instanceOf(ImmutableMap).isRequired,
+  user: PropTypes.instanceOf(ImmutableMap).isRequired,
+  logout: PropTypes.func.isRequired,
+  pushState: PropTypes.func.isRequired
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)

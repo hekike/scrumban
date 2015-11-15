@@ -5,6 +5,7 @@ import config from '../../../config/client'
 import { checkFetchStatus, parseFetchJSON, handleError } from './fetchHelper'
 
 export const USER_LOGIN = 'USER_LOGIN'
+export const USER_LOGOUT = 'USER_LOGOUT'
 
 const USER_URL = config.api.url + '/user'
 
@@ -17,6 +18,17 @@ function login (user) {
   return {
     type: USER_LOGIN,
     user
+  }
+}
+
+/**
+ * @method logout
+ * @param {Object} user
+ * @return {Object} action
+ */
+export function logout () {
+  return {
+    type: USER_LOGOUT
   }
 }
 

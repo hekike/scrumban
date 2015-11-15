@@ -13,6 +13,6 @@ export default (
   <Route component={App}>
     <Route path="/" component={requireAuth(Dashboard)} />
     <Route path="/user/login" component={UserLoginPage} />
-    <Route path="*" component={UserLoginPage} />
+    <Route path="*" component={requireAuth(Dashboard)} />
   </Route>
 )
