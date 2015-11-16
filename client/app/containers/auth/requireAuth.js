@@ -25,9 +25,9 @@ export default function requireAuthentication (ComponentToWrap) {
     }
 
     checkAuth () {
-      const { isAuthenticated, pushState, router } = this.props
+      const { isAuthenticated, isLoading, pushState, router } = this.props
 
-      if (!isAuthenticated) {
+      if (!isAuthenticated && !isLoading) {
         pushState({
           nextPathname: router.location.pathname
         }, `/user/login`)
@@ -57,6 +57,7 @@ export default function requireAuthentication (ComponentToWrap) {
   function mapStateToProps (state) {
     return {
       isAuthenticated: state.user.get('isLogged'),
+      isLoading: state.user.get('isLoading'),
       router: state.router
     }
   }
@@ -74,6 +75,7 @@ export default function requireAuthentication (ComponentToWrap) {
 
   RequrieAuth.propTypes = {
     isAuthenticated: PropTypes.bool.isRequired,
+    isLoading: PropTypes.bool.isRequired,
     pushState: PropTypes.func.isRequired,
     router: PropTypes.shape({
       location: PropTypes.shape({

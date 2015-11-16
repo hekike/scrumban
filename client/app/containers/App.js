@@ -24,10 +24,18 @@ class App extends Component {
     this.onLogoutClick = this.onLogoutClick.bind(this)
   }
 
-  onLogoutClick () {
-    const { pushState, logout } = this.props
+  componentWillMount () {
+    const { user, fetchMe } = this.props
 
-    logout()
+    if (!user.get('isFetched') && !user.get('isLoading')) {
+      fetchMe()
+    }
+  }
+
+  onLogoutClick () {
+    const { pushState, fetchLogout } = this.props
+
+    fetchLogout()
     pushState(null, '/user/login')
   }
 
@@ -70,7 +78,11 @@ class App extends Component {
   }
 
   render () {
-    const { children } = this.props
+    const { children, user } = this.props
+
+    if (!user.get('isFetched') && user.get('isLoading')) {
+      return <p>{'loading...'}</p>
+    }
 
     return (
       <div>
@@ -105,10 +117,11 @@ function mapStateToProps (state) {
  * @return {Object} props
  */
 function mapDispatchToProps (dispatch) {
-  const { logout } = actions.user
+  const { fetchLogout, fetchMe } = actions.user
 
   return {
-    logout: (user) => dispatch(logout()),
+    fetchLogout: () => dispatch(fetchLogout()),
+    fetchMe: () => dispatch(fetchMe()),
     pushState: (state, path) => dispatch(pushState(state, path))
   }
 }
@@ -118,8 +131,9 @@ App.propTypes = {
   children: PropTypes.node,
   app: PropTypes.instanceOf(ImmutableMap).isRequired,
   user: PropTypes.instanceOf(ImmutableMap).isRequired,
-  logout: PropTypes.func.isRequired,
-  pushState: PropTypes.func.isRequired
+  fetchLogout: PropTypes.func.isRequired,
+  pushState: PropTypes.func.isRequired,
+  fetchMe: PropTypes.func.isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

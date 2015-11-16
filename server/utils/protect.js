@@ -51,7 +51,7 @@ function * user (next) {
   yield next
 
   // extend session after response if not logout endpoint
-  if (this.path !== '/user/logout') {
+  if (this.path !== '/api/user/logout') {
     try {
       yield Session.extend(token, config.jwt.ttl)
     } catch (err) {
