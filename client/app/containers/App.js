@@ -5,25 +5,18 @@ import { connect } from 'react-redux'
 import { pushState } from 'redux-router'
 import { Map as ImmutableMap } from 'immutable'
 import { onClass as classMixin } from 'react-mixin'
-import { Link } from 'react-router'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
-import Navbar from 'react-bootstrap/lib/Navbar'
-import NavBrand from 'react-bootstrap/lib/NavBrand'
-import Nav from 'react-bootstrap/lib/Nav'
-import NavDropdown from 'react-bootstrap/lib/NavDropdown'
-import NavItem from 'react-bootstrap/lib/NavItem'
-import MenuItem from 'react-bootstrap/lib/MenuItem'
+import Navbar from '../components/Navbar'
+import AppError from '../components/AppError'
 
 import actions from '../actions'
 
 class App extends Component {
-  constructor (props) {
-    super(props)
 
-    this.onLogoutClick = this.onLogoutClick.bind(this)
-  }
-
+  /**
+   * @method componentWillMount
+   */
   componentWillMount () {
     const { user, fetchMe } = this.props
 
@@ -32,53 +25,12 @@ class App extends Component {
     }
   }
 
-  onLogoutClick () {
-    const { pushState, fetchLogout } = this.props
-
-    fetchLogout()
-    pushState(null, '/user/login')
-  }
-
-  renderAppError () {
-    const { app } = this.props
-
-    if (!app.get('error')) {
-      return null
-    }
-
-    return (
-      <p>{app.get('error')}</p>
-    )
-  }
-
-  renderNavbar () {
-    const { onLogoutClick } = this
-    const { user } = this.props
-
-    const loggedInNav = (
-      <Nav>
-        <li>
-          <Link to="/boards">{'boards'}</Link>
-        </li>
-      </Nav>
-    )
-
-    return (
-      <Navbar>
-        <NavBrand><Link to="/">{'Scrumban'}</Link></NavBrand>
-        {user.get('isLogged') ? loggedInNav : null}
-        <Nav navbar right>
-          {user.get('isLogged') ? (<NavDropdown title={user.get('email')} id="user-menu">
-            <MenuItem onClick={onLogoutClick}>{'logout'}</MenuItem>
-          </NavDropdown>)
-            : <NavItem href="/user/login">{'login'}</NavItem>}
-        </Nav>
-      </Navbar>
-    )
-  }
-
+  /**
+   * @method render
+   * @return {JSX}
+   */
   render () {
-    const { children, user } = this.props
+    const { children, user, app, fetchLogout, pushState } = this.props
 
     if (!user.get('isFetched') && user.get('isLoading')) {
       return <p>{'loading...'}</p>
@@ -86,9 +38,9 @@ class App extends Component {
 
     return (
       <div>
-      {this.renderNavbar()}
+        <Navbar user={user} fetchLogout={fetchLogout} pushState={pushState} />
         <div className="container">
-          {this.renderAppError()}
+          <AppError app={app} />
           {children}
         </div>
       </div>
@@ -129,6 +81,7 @@ function mapDispatchToProps (dispatch) {
 App.propTypes = {
   // Injected by React Router
   children: PropTypes.node,
+
   app: PropTypes.instanceOf(ImmutableMap).isRequired,
   user: PropTypes.instanceOf(ImmutableMap).isRequired,
   fetchLogout: PropTypes.func.isRequired,
