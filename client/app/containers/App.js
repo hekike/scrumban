@@ -9,6 +9,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 import Navbar from '../components/Navbar'
 import AppError from '../components/AppError'
+import Loader from '../components/Loader'
 
 import actions from '../actions'
 
@@ -33,7 +34,7 @@ class App extends Component {
     const { children, user, app, fetchLogout, pushState } = this.props
 
     if (!user.get('isFetched') && user.get('isLoading')) {
-      return <p>{'loading...'}</p>
+      return <Loader />
     }
 
     return (

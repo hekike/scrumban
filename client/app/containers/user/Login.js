@@ -9,6 +9,8 @@ import { pushState } from 'redux-router'
 import { Map as ImmutableMap } from 'immutable'
 import actions from '../../actions'
 
+import Loader from '../../components/Loader'
+
 /**
 * @class UserLogin
 */
@@ -79,7 +81,7 @@ class UserLogin extends Component {
    * @return {JSX}
    */
   render () {
-    const { isError } = this.state
+    const { isError, isLoading } = this.state
     const { linkState, onSubmit } = this
 
     const errorMessage = (<div className="alert alert-danger registerView" role="alert">
@@ -92,6 +94,7 @@ class UserLogin extends Component {
           <h1>{'Login'}</h1>
 
           {isError ? errorMessage : null}
+          {isLoading ? <Loader /> : null}
 
           <form className="col-md-12" onSubmit={onSubmit}>
             <div className="form-group">
