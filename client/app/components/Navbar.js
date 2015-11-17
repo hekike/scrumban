@@ -7,7 +7,7 @@ import { onClass as classMixin } from 'react-mixin'
 import { Link } from 'react-router'
 
 import Navbar from 'react-bootstrap/lib/Navbar'
-import NavBrand from 'react-bootstrap/lib/NavBrand'
+import NavbarBrand from 'react-bootstrap/lib/NavbarBrand'
 import Nav from 'react-bootstrap/lib/Nav'
 import NavDropdown from 'react-bootstrap/lib/NavDropdown'
 import NavItem from 'react-bootstrap/lib/NavItem'
@@ -52,9 +52,9 @@ class NavbarComponent extends Component {
 
     return (
       <Navbar>
-        <NavBrand><Link to="/">{'Scrumban'}</Link></NavBrand>
+        <NavbarBrand><Link to="/">{'Scrumban'}</Link></NavbarBrand>
         {user.get('isLogged') ? loggedInNav : null}
-        <Nav navbar right>
+        <Nav navbar pullRight>
           {user.get('isLogged') ? (<NavDropdown title={user.get('email')} id="user-menu">
             <MenuItem onClick={onLogoutClick}>{'logout'}</MenuItem>
           </NavDropdown>)

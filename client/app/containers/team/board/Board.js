@@ -25,12 +25,18 @@ class Board extends Component {
     this.loadData = this.loadData.bind(this)
   }
 
+  /**
+   * @method componentWillMount
+   */
   componentWillMount () {
     if (!this.state.isFetched && !this.state.isLoading) {
       this.loadData()
     }
   }
 
+  /**
+   * @method loadData
+   */
   loadData () {
     const { fetchBoardById, router } = this.props
     const teamId = router.params.teamId
