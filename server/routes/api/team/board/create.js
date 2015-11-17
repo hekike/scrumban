@@ -14,7 +14,7 @@ module.exports = function *() {
   const body = yield routesUtils.joiValidate(this, schema)
   const teamId = this.params.teamId
 
-  logger.info('create board', body.data.name)
+  logger.info(`create board ${body.data.name} for team ${teamId}`)
 
   const data = _.merge({}, body.data, {
     teamId: teamId
