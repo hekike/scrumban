@@ -57,20 +57,6 @@ describe('POST /api/team/:teamId/board', function () {
     yield board.delete()
   })
 
-  it('should reject unauthorized team access', function * () {
-    yield request(server.listen())
-      .post(`/api/team/unauthorizedTeamId/board`)
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        data: {
-          name: 'My Board'
-        }
-      })
-      .expect(404) // 404 instead of 401, we don't want to users to guess
-      .expect('Content-Type', /application\/json/)
-      .end()
-  })
-
   it('should reject invalid body', function * () {
     yield request(server.listen())
       .post(`/api/team/${team.id}/board`)

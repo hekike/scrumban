@@ -9,7 +9,7 @@ const thinky = require('../../../models/thinky')
 const r = thinky.r
 
 describe('POST /api/user', function () {
-  after(function *() {
+  before(function *() {
     yield r.table(User.getTableName())
       .filter({
         email: 'test@test.com'

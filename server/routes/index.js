@@ -21,6 +21,7 @@ router.secured.get('/api/user/:userId', protect, require('./api/user/getById'))
 
 router.secured.post('/api/team', protect, require('./api/team/create'))
 router.secured.get('/api/team', protect, require('./api/team/get'))
+router.secured.get('/api/team/:teamId', protect, require('./api/team/getById'))
 
 router.secured.post('/api/team/:teamId/board', protect, require('./api/team/board/create'))
 router.secured.get('/api/team/:teamId/board/:boardId', protect, require('./api/team/board/getById'))
