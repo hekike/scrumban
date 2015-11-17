@@ -9,6 +9,7 @@ import { pushState } from 'redux-router'
 import actions from '../../actions'
 
 import Loader from '../../components/Loader'
+import TeamBoard from '../../components/dashboard/TeamBoard'
 
 /**
 * @class Dashboard
@@ -63,22 +64,7 @@ class Dashboard extends Component {
         <div className="col-md-12">
           <h1>{'Dashboard'}</h1>
           {isLoading ? <Loader /> : null}
-          {teams.map(team =>
-            <div key={team.get('id')} className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">{team.get('name')}</h3>
-              </div>
-              <div className="panel-body">
-                <ul>
-                  {team.get('boards').map(board =>
-                    <li key={board.get('id')}>
-                      {board.get('name')}
-                    </li>
-                  )}
-                </ul>
-              </div>
-            </div>
-          )}
+          {teams.map(team => <TeamBoard key={team.get('id')} team={team} />)}
         </div>
       </div>
     )

@@ -23,5 +23,6 @@ router.secured.post('/api/team', protect, require('./api/team/create'))
 router.secured.get('/api/team', protect, require('./api/team/get'))
 
 router.secured.post('/api/team/:teamId/board', protect, require('./api/team/board/create'))
+router.secured.get('/api/team/:teamId/board/:boardId', protect, require('./api/team/board/getById'))
 
 module.exports = router
