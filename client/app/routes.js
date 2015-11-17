@@ -14,7 +14,7 @@ export default (
   <Route component={App}>
     <Route path="/" component={requireAuth(Dashboard)} />
     <Route path="/user/login" component={UserLoginPage} />
-    <Route path="/team/:teamId/board/:boardId" component={Board} />
+    <Route path="/team/:teamId/board/:boardId" component={requireAuth(Board)} />
     <Route path="*" component={requireAuth(Dashboard)} />
   </Route>
 )

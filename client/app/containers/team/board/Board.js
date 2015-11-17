@@ -17,7 +17,7 @@ class Board extends Component {
     super()
 
     this.state = {
-      board: {},
+      board: null,
       isLoading: false,
       isFetched: false
     }
