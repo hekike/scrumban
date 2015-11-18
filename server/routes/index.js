@@ -29,4 +29,7 @@ router.secured.get('/api/team/:teamId/board/:boardId', protect, require('./api/t
 router.secured.post('/api/team/:teamId/board/:boardId/column', protect,
   require('./api/team/board/column/create'))
 
+router.secured.delete('/api/team/:teamId/board/:boardId/column/:columnId', protect,
+  require('./api/team/board/column/delete'))
+
 module.exports = router

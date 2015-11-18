@@ -9,7 +9,8 @@ const Column = thinky.createModel('Column', {
   id: type.string(),
   boardId: type.string(),
   name: type.string(),
-  createdAt: type.date().default(r.now())
+  createdAt: type.date().default(r.now()),
+  isRemoved: type.boolean().default(false)
 })
 
 Column.belongsTo(Board, 'board', 'boardId', 'id')

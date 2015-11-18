@@ -55,7 +55,8 @@ describe('POST /api/team/:teamId/board/column', function () {
       id: column.id,
       name: 'My Column',
       createdAt: column.createdAt.toISOString(),
-      boardId: board.id
+      boardId: board.id,
+      isRemoved: false
     })
 
     yield column.delete()
