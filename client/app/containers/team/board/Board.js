@@ -5,9 +5,10 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { onClass as classMixin } from 'react-mixin'
 import { fromJS } from 'immutable'
 import { connect } from 'react-redux'
-import actions from '../../../actions'
 
+import actions from '../../../actions'
 import Loader from '../../../components/Loader'
+import Column from '../../../components/team/board/Column'
 
 /**
 * @class Board
@@ -68,7 +69,14 @@ class Board extends Component {
     }
 
     return (
-      <div>{board.get('name')}</div>
+      <div>
+        {board.get('name')}
+        <div className="columns">
+          <Column />
+          <Column />
+          <Column />
+        </div>
+      </div>
     )
   }
 
