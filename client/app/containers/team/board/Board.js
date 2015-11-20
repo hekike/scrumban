@@ -10,6 +10,34 @@ import actions from '../../../actions'
 import Loader from '../../../components/Loader'
 import Column from '../../../components/team/board/Column'
 
+const mockColumns = [
+  {
+    id: 'col-1',
+    name: 'Column 1',
+    cards: [
+      { id: 'card-1', name: 'Card 1' },
+      { id: 'card-2', name: 'Card 2' },
+      { id: 'card-3', name: 'Card 3' },
+      { id: 'card-4', name: 'Card 4' }
+    ]
+  },
+  {
+    id: 'col-2',
+    name: 'Column 2',
+    cards: [
+      { id: 'card-2-1', name: 'Card 2.1' },
+      { id: 'card-2-2', name: 'Card 2.2' }
+    ]
+  },
+  {
+    id: 'col-3',
+    name: 'Column 3',
+    cards: [
+      { id: 'card-3-1', name: 'Card 3.1' }
+    ]
+  }
+]
+
 /**
 * @class Board
 */
@@ -24,6 +52,7 @@ class Board extends Component {
     }
 
     this.loadData = this.loadData.bind(this)
+    this.moveColumnCard = this.moveColumnCard.bind(this)
   }
 
   /**
@@ -33,6 +62,28 @@ class Board extends Component {
     if (!this.state.isFetched && !this.state.isLoading) {
       this.loadData()
     }
+  }
+
+  /**
+   * @method moveColumnCard
+   * @method {Number} columnIndex
+   * @param {Number} dragIndex
+   * @param {Number} hoverIndex
+   */
+  moveColumnCard (columnIndex, dragIndex, hoverIndex) {
+    console.log(arguments)
+    const { board } = this.state
+    const column = board.getIn(['columns', columnIndex])
+    const draggedCard = column.getIn(['cards', dragIndex])
+
+    let cards = column.get('cards').splice(dragIndex, 1)
+    cards = cards.splice(hoverIndex, 0, draggedCard)
+
+    const newBoard = board.setIn(['columns', columnIndex, 'cards'], cards)
+
+    this.setState({
+      board: newBoard
+    })
   }
 
   /**
@@ -49,6 +100,9 @@ class Board extends Component {
 
     return fetchBoardById(teamId, boardId)
       .then(resp => {
+        // TODO: remove mock
+        resp.board.columns = mockColumns
+
         this.setState({
           board: fromJS(resp.board),
           isFetched: true,
@@ -63,6 +117,7 @@ class Board extends Component {
    */
   boardRender () {
     const { board } = this.state
+    const { moveColumnCard } = this
 
     if (!board) {
       return
@@ -72,9 +127,15 @@ class Board extends Component {
       <div>
         {board.get('name')}
         <div className="columns">
-          <Column />
-          <Column />
-          <Column />
+          {board.get('columns').map((column, idx) => {
+            const moveCard = (dragIndex, hoverIndex) => moveColumnCard(idx, dragIndex, hoverIndex)
+
+            return (
+              <Column key={column.get('id')}
+                  column={column}
+                  moveCard={moveCard} />
+            )
+          })}
         </div>
       </div>
     )

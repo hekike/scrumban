@@ -18,15 +18,19 @@ const vendors = [
   'history',
   'react',
   'react-addons-linked-state-mixin',
+  'react-addons-pure-render-mixin',
   'react-dom',
   'react-router',
   'react-mixin',
+  'react-redux',
   'redux',
   'redux-thunk',
   'redux-router',
   'isomorphic-fetch',
   'immutable',
-  'react-bootstrap'
+  'react-bootstrap',
+  'react-dnd',
+  'react-dnd-html5-backend'
 ]
 
 const entry = {
