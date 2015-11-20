@@ -5,6 +5,8 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { onClass as classMixin } from 'react-mixin'
 import { fromJS } from 'immutable'
 import { connect } from 'react-redux'
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContext } from 'react-dnd'
 
 import actions from '../../../actions'
 import Loader from '../../../components/Loader'
@@ -66,20 +68,30 @@ class Board extends Component {
 
   /**
    * @method moveColumnCard
-   * @method {Number} columnIndex
    * @param {Number} dragIndex
    * @param {Number} hoverIndex
    */
-  moveColumnCard (columnIndex, dragIndex, hoverIndex) {
-    console.log(arguments)
+  moveColumnCard (dragIndex, hoverIndex) {
     const { board } = this.state
-    const column = board.getIn(['columns', columnIndex])
-    const draggedCard = column.getIn(['cards', dragIndex])
 
-    let cards = column.get('cards').splice(dragIndex, 1)
-    cards = cards.splice(hoverIndex, 0, draggedCard)
+    const dragColumnIdx = Number(dragIndex.split('-').shift())
+    const hoverColumnIdx = Number(hoverIndex.split('-').shift())
 
-    const newBoard = board.setIn(['columns', columnIndex, 'cards'], cards)
+    const dragCardIdx = Number(dragIndex.split('-').pop())
+    const hoverCardIdx = Number(hoverIndex.split('-').pop())
+
+    // dragged card
+    let draggedCard = board.getIn(['columns', dragColumnIdx, 'cards', dragCardIdx])
+
+    // remove from source column
+    let newBoard = board.updateIn(['columns', dragColumnIdx, 'cards'], cards =>
+      cards.splice(dragCardIdx, 1)
+    )
+
+    // add to target column
+    newBoard = newBoard.updateIn(['columns', hoverColumnIdx, 'cards'], cards =>
+      cards.splice(hoverCardIdx, 0, draggedCard)
+    )
 
     this.setState({
       board: newBoard
@@ -128,10 +140,11 @@ class Board extends Component {
         {board.get('name')}
         <div className="columns">
           {board.get('columns').map((column, idx) => {
-            const moveCard = (dragIndex, hoverIndex) => moveColumnCard(idx, dragIndex, hoverIndex)
+            const moveCard = (dragIndex, hoverIndex) => moveColumnCard(dragIndex, hoverIndex)
 
             return (
               <Column key={column.get('id')}
+                  index={idx}
                   column={column}
                   moveCard={moveCard} />
             )
@@ -197,4 +210,6 @@ Board.propTypes = {
   fetchBoardById: PropTypes.func.isRequired
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Board)
+const BoardConnected = connect(mapStateToProps, mapDispatchToProps)(Board)
+
+export default DragDropContext(HTML5Backend)(BoardConnected)

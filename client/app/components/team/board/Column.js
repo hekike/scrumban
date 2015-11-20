@@ -4,8 +4,6 @@ import React, { Component, PropTypes } from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { Map as ImmutableMap, fromJS } from 'immutable'
 import { onClass as classMixin } from 'react-mixin'
-import { DragDropContext } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
 
 import Card from './Card'
 
@@ -42,16 +40,16 @@ class Column extends Component {
    * @return {JSX}
    */
   render () {
-    const { column, moveCard } = this.props
+    const { column, moveCard, index } = this.props
     const { cards } = this.state
 
     return (
       <div className="column">
         <h3>{column.get('name')}</h3>
         <div className="cards">
-          {cards.map((card, i) =>
+          {cards.map((card, cardIndex) =>
             <Card key={card.get('id')}
-                index={i}
+                index={`${index}-${cardIndex}`}
                 id={card.get('id')}
                 card={card}
                 moveCard={moveCard} />
@@ -68,7 +66,8 @@ Column.displayName = 'Column'
 
 Column.propTypes = {
   column: PropTypes.instanceOf(ImmutableMap).isRequired,
+  index: PropTypes.number.isRequired,
   moveCard: PropTypes.func.isRequired
 }
 
-export default DragDropContext(HTML5Backend)(Column)
+export default Column

@@ -8,15 +8,6 @@ import { onClass as classMixin } from 'react-mixin'
 import { DragSource, DropTarget } from 'react-dnd'
 import ItemTypes from './ItemTypes'
 
-const cardSource = {
-  beginDrag (props) {
-    return {
-      id: props.id,
-      index: props.index
-    }
-  }
-}
-
 const cardTarget = {
   hover (props, monitor, component) {
     const dragIndex = monitor.getItem().index
@@ -64,6 +55,15 @@ const cardTarget = {
   }
 }
 
+const cardSource = {
+  beginDrag (props) {
+    return {
+      id: props.id,
+      index: props.index
+    }
+  }
+}
+
 /**
 * @class Card
 */
@@ -97,7 +97,7 @@ Card.propTypes = {
 
   connectDragSource: PropTypes.func.isRequired,
   connectDropTarget: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
+  index: PropTypes.string.isRequired,
   isDragging: PropTypes.bool.isRequired,
   id: PropTypes.string.isRequired,
   moveCard: PropTypes.func.isRequired
