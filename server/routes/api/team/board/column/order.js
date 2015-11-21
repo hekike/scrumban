@@ -32,19 +32,19 @@ module.exports = function *() {
   const updateSpecific = Column
     .get(routeColumnId)
     .update({
-      orderIndex: body.data.target
+      orderIndex: body.data.orderIndex
     })
 
   let updateOthers
 
   // moved forward
-  if (body.data.source < body.data.target) {
+  if (column.orderIndex < body.data.orderIndex) {
     updateOthers = Column
       .filter(
         r.row('boardId').eq(column.boardId)
         .and(r.row('id').ne(routeColumnId))
-        .and(r.row('orderIndex').ge(body.data.source))
-        .and(r.row('orderIndex').le(body.data.target))
+        .and(r.row('orderIndex').ge(column.orderIndex))
+        .and(r.row('orderIndex').le(body.data.orderIndex))
       )
       .update({
         orderIndex: r.row('orderIndex').sub(1)
@@ -56,16 +56,18 @@ module.exports = function *() {
       .filter(
         r.row('boardId').eq(column.boardId)
         .and(r.row('id').ne(routeColumnId))
-        .and(r.row('orderIndex').ge(body.data.target))
-        .and(r.row('orderIndex').le(body.data.source))
+        .and(r.row('orderIndex').ge(body.data.orderIndex))
+        .and(r.row('orderIndex').le(column.orderIndex))
       )
       .update({
         orderIndex: r.row('orderIndex').add(1)
       })
   }
 
-  yield updateSpecific.execute()
-  yield updateOthers.execute()
+  yield [
+    updateSpecific.execute(),
+    updateOthers.execute()
+  ]
 
   this.status = 204
 }

@@ -45,8 +45,7 @@ export function sendColumnOrder (teamId, boardId, columnId, order) {
       },
       body: JSON.stringify({
         data: {
-          source: order.source,
-          target: order.target
+          orderIndex: order.target
         }
       })
     })

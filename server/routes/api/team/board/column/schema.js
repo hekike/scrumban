@@ -10,8 +10,7 @@ const create = joi.object({
 
 const order = joi.object({
   data: joi.object({
-    source: joi.number().required(),
-    target: joi.number().required()
+    orderIndex: joi.number().required()
   }).required()
 })
 

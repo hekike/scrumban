@@ -102,7 +102,8 @@ describe('GET /api/team/:teamId/board/:boardId', function () {
             createdAt: column1.createdAt.toISOString(),
             boardId: board.id,
             isRemoved: column1.isRemoved,
-            orderIndex: column1.orderIndex
+            orderIndex: column1.orderIndex,
+            cards: []
           },
           {
             id: column2.id,
@@ -110,7 +111,8 @@ describe('GET /api/team/:teamId/board/:boardId', function () {
             createdAt: column2.createdAt.toISOString(),
             boardId: board.id,
             isRemoved: column2.isRemoved,
-            orderIndex: column2.orderIndex
+            orderIndex: column2.orderIndex,
+            cards: []
           }
         ]
       })
