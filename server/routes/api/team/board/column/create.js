@@ -16,8 +16,16 @@ module.exports = function *() {
 
   logger.info(`create column ${body.data.name} for board ${boardId}`)
 
+  const boardColumnCount = yield Column
+    .filter({
+      boardId: boardId
+    })
+    .count()
+    .execute()
+
   const data = _.merge({}, body.data, {
-    boardId: boardId
+    boardId: boardId,
+    orderIndex: boardColumnCount
   })
 
   // create column

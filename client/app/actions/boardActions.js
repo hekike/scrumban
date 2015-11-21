@@ -33,7 +33,7 @@ export function fetchBoardById (teamId, boardId) {
       isLoading: true
     }))
 
-    return fetch(`${TEAM_URL}/${teamId}/${BOARD_URL}/${boardId}`, {
+    return fetch(`${TEAM_URL}/${teamId}/${BOARD_URL}/${boardId}?include=columns`, {
       method: 'get',
       credentials: 'same-origin',
       headers: {

@@ -12,34 +12,6 @@ import actions from '../../../actions'
 import Loader from '../../../components/Loader'
 import Column from '../../../components/team/board/Column'
 
-const mockColumns = [
-  {
-    id: 'col-1',
-    name: 'Column 1',
-    cards: [
-      { id: 'card-1', name: 'Card 1' },
-      { id: 'card-2', name: 'Card 2' },
-      { id: 'card-3', name: 'Card 3' },
-      { id: 'card-4', name: 'Card 4' }
-    ]
-  },
-  {
-    id: 'col-2',
-    name: 'Column 2',
-    cards: [
-      { id: 'card-2-1', name: 'Card 2.1' },
-      { id: 'card-2-2', name: 'Card 2.2' }
-    ]
-  },
-  {
-    id: 'col-3',
-    name: 'Column 3',
-    cards: [
-      { id: 'card-3-1', name: 'Card 3.1' }
-    ]
-  }
-]
-
 /**
 * @class Board
 */
@@ -142,9 +114,6 @@ class Board extends Component {
 
     return fetchBoardById(teamId, boardId)
       .then(resp => {
-        // TODO: remove mock
-        resp.board.columns = mockColumns
-
         this.setState({
           board: fromJS(resp.board),
           isFetched: true,

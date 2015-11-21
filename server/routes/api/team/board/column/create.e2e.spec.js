@@ -8,6 +8,7 @@ const Column = require('../../../../../models/column')
 const userFixtures = require('../../../../../fixtures/user')
 const teamFixtures = require('../../../../../fixtures/team')
 const boardFixtures = require('../../../../../fixtures/board')
+const columnFixtures = require('../../../../../fixtures/column')
 
 describe('POST /api/team/:teamId/board/column', function () {
   let user
@@ -56,10 +57,48 @@ describe('POST /api/team/:teamId/board/column', function () {
       name: 'My Column',
       createdAt: column.createdAt.toISOString(),
       boardId: board.id,
-      isRemoved: false
+      isRemoved: false,
+      orderIndex: 0
     })
 
     yield column.delete()
+  })
+
+  describe('with increasing index', () => {
+    let columnExisting
+
+    beforeEach(function *() {
+      columnExisting = yield columnFixtures.create(board.id)
+    })
+
+    afterEach(function *() {
+      yield [
+        columnFixtures.destroy(columnExisting)
+      ]
+    })
+
+    it('should create a board', function * () {
+      const resp = yield request(server.listen())
+        .post(`/api/team/${team.id}/board/${board.id}/column`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          data: {
+            name: 'My Column'
+          }
+        })
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+        .end()
+
+      // expect
+      const column = yield Column
+        .get(resp.body.id)
+        .run()
+
+      expect(resp.body.orderIndex).to.be.eql(1)
+
+      yield column.delete()
+    })
   })
 
   it('should reject invalid body', function * () {

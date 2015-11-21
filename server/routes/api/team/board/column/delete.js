@@ -3,6 +3,7 @@
 const Column = require('../../../../../models/column')
 const thinky = require('../../../../../models/thinky')
 const Errors = thinky.Errors
+const r = thinky.r
 
 /**
 * Column remove
@@ -30,7 +31,20 @@ module.exports = function *() {
     column.isRemoved = true
     yield column.save()
   } else {
-    yield column.delete()
+    // update orderIndex for remaining items
+    let updateOrderIndex = Column
+      .filter(
+        r.row('boardId').eq(column.boardId)
+        .and(r.row('orderIndex').gt(column.orderIndex))
+      )
+      .update({
+        orderIndex: r.row('orderIndex').sub(1)
+      })
+
+    yield [
+      column.delete(),
+      updateOrderIndex.execute()
+    ]
   }
 
   this.status = 204
