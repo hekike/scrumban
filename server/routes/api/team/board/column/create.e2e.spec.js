@@ -112,4 +112,54 @@ describe('POST /api/team/:teamId/board/column', function () {
       .expect('Content-Type', /application\/json/)
       .end()
   })
+
+  it('should reject if board is missing', function * () {
+    yield request(server.listen())
+      .post(`/api/team/${team.id}/board/booard/column`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        data: {
+          name: 'My Column'
+        }
+      })
+      .expect(404)
+      .expect('Content-Type', /application\/json/)
+      .end()
+  })
+
+  describe('board auth', () => {
+    let user2
+    let team2
+    let board2
+
+    beforeEach(function *() {
+      let result = yield userFixtures.createLoggedInUser()
+      user2 = result.user
+
+      team2 = yield teamFixtures.create([user2.id])
+      board2 = yield boardFixtures.create(team2.id)
+    })
+
+    afterEach(function *() {
+      yield [
+        userFixtures.destroyLoggedInUser(user2),
+        teamFixtures.destroy(team2),
+        boardFixtures.destroy(board2)
+      ]
+    })
+
+    it('should reject if board access is unauthorized', function * () {
+      yield request(server.listen())
+        .post(`/api/team/${team.id}/board/${board2.id}/column`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          data: {
+            name: 'My Column'
+          }
+        })
+        .expect(401)
+        .expect('Content-Type', /application\/json/)
+        .end()
+    })
+  })
 })

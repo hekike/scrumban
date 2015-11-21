@@ -12,6 +12,7 @@ module.exports = function *() {
   const routeBoardId = this.params.boardId
   const include = _.isString(this.query.include) ? this.query.include.split(',') : []
   const isIncludeColumns = include.indexOf('columns') > -1
+  const isIncludeCards = include.indexOf('cards') > -1
   let board
 
   // query
@@ -19,9 +20,16 @@ module.exports = function *() {
     .get(routeBoardId)
 
   // include teams
-  if (isIncludeColumns) {
+  if (isIncludeColumns || isIncludeCards) {
     query = query.getJoin({
       columns: true
+    })
+  }
+
+  // include cards
+  if (isIncludeCards) {
+    query = query.getJoin({
+      cards: true
     })
   }
 
@@ -35,15 +43,22 @@ module.exports = function *() {
     throw err
   }
 
-  // TODO: mock cards
-  if (isIncludeColumns) {
+  if (isIncludeColumns || isIncludeCards) {
     board.columns = _.sortBy(board.columns, 'orderIndex')
+  }
 
+  if (isIncludeCards) {
     board.columns = board.columns.map(column => {
-      column.cards = []
+      column.cards = _.filter(board.cards, {
+        columnId: column.id
+      })
       return column
     })
+
+    board.cards = undefined
   }
+
+  // board.columns = _.sortBy(board.columns, 'orderIndex')
 
   this.body = board
 }

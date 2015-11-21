@@ -26,6 +26,7 @@ router.secured.get('/api/team/:teamId', protect, require('./api/team/getById'))
 router.secured.post('/api/team/:teamId/board', protect, require('./api/team/board/create'))
 router.secured.get('/api/team/:teamId/board/:boardId', protect, require('./api/team/board/getById'))
 
+// column
 router.secured.post('/api/team/:teamId/board/:boardId/column', protect,
   require('./api/team/board/column/create'))
 
@@ -34,5 +35,9 @@ router.secured.delete('/api/team/:teamId/board/:boardId/column/:columnId', prote
 
 router.secured.put('/api/team/:teamId/board/:boardId/column/:columnId/order', protect,
   require('./api/team/board/column/order'))
+
+// card
+router.secured.post('/api/team/:teamId/board/:boardId/card', protect,
+  require('./api/team/board/card/create'))
 
 module.exports = router
