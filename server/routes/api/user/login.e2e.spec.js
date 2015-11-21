@@ -6,9 +6,19 @@ const expect = require('chai').expect
 const server = require('../../../server')
 const User = require('../../../models/user')
 const Session = require('../../../models/session')
+const thinky = require('../../../models/thinky')
+const r = thinky.r
 
 describe('POST /api/user/login', function () {
   let user
+
+  before(function *() {
+    yield r.table(User.getTableName())
+      .filter({
+        email: 'test@test.com'
+      })
+      .delete()
+  })
 
   beforeEach(function *() {
     user = new User({
