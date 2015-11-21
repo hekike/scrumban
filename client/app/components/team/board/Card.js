@@ -7,6 +7,8 @@ import { Map as ImmutableMap } from 'immutable'
 import { onClass as classMixin } from 'react-mixin'
 import { DragSource, DropTarget } from 'react-dnd'
 import ItemTypes from './ItemTypes'
+import Modal from 'react-bootstrap/lib/Modal'
+import Button from 'react-bootstrap/lib/Button'
 
 const cardTarget = {
   hover (props, monitor, component) {
@@ -81,6 +83,49 @@ const cardSource = {
 * @class Card
 */
 class Card extends Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      isOpen: false
+    }
+
+    this.open = this.open.bind(this)
+    this.close = this.close.bind(this)
+    this.renderModal = this.renderModal.bind(this)
+  }
+
+  close () {
+    this.setState({
+      isOpen: false
+    })
+  }
+
+  open () {
+    this.setState({
+      isOpen: true
+    })
+  }
+
+  renderModal () {
+    const { card } = this.props
+    const { isOpen } = this.state
+    const { close } = this
+
+    return (
+      <Modal show={isOpen} onHide={close} animation={false} bsSize="large">
+        <Modal.Header closeButton>
+          <Modal.Title>{card.get('name')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h4>{'Text in a modal'}</h4>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={close}>{'Close'}</Button>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
 
   /**
    * @method render
@@ -88,13 +133,15 @@ class Card extends Component {
    */
    render () {
      const { card, isDragging, connectDragSource, connectDropTarget } = this.props
+     const { open, renderModal } = this
      const cardStyle = {
        opacity: isDragging ? 0.2 : 1
      }
 
      return connectDragSource(connectDropTarget(
-       <div className="card" style={cardStyle}>
+       <div onClick={open} className="card" style={cardStyle}>
          {card.get('name')}
+         {renderModal()}
        </div>
      ))
    }
