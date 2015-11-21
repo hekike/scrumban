@@ -1,6 +1,5 @@
 'use strict'
 
-import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
 import { findDOMNode } from 'react-dom'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
@@ -11,6 +10,8 @@ import ItemTypes from './ItemTypes'
 
 const cardTarget = {
   hover (props, monitor, component) {
+    const monitorItem = monitor.getItem()
+
     const dragIndex = {
       cardIdx: monitor.getItem().cardIdx,
       columnIdx: monitor.getItem().columnIdx
@@ -21,7 +22,7 @@ const cardTarget = {
     }
 
     // Don't replace items with themselves
-    if (_.isEqual(dragIndex, hoverIndex)) {
+    if (monitorItem.id === props.id) {
       return
     }
 
@@ -70,6 +71,9 @@ const cardSource = {
       columnIdx: props.columnIdx,
       cardIdx: props.cardIdx
     }
+  },
+  isDragging (props, monitor) {
+    return props.id === monitor.getItem().id
   }
 }
 
@@ -85,8 +89,7 @@ class Card extends Component {
    render () {
      const { card, isDragging, connectDragSource, connectDropTarget } = this.props
      const cardStyle = {
-       opacity: isDragging ? 0 : 1,
-       cursor: isDragging ? 'grabbing' : 'pointer'
+       opacity: isDragging ? 0.2 : 1
      }
 
      return connectDragSource(connectDropTarget(
