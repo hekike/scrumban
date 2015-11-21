@@ -74,11 +74,11 @@ class Board extends Component {
   moveColumnCard (dragIndex, hoverIndex) {
     const { board } = this.state
 
-    const dragColumnIdx = Number(dragIndex.split('-').shift())
-    const hoverColumnIdx = Number(hoverIndex.split('-').shift())
+    const dragColumnIdx = dragIndex.columnIdx
+    const hoverColumnIdx = hoverIndex.columnIdx
 
-    const dragCardIdx = Number(dragIndex.split('-').pop())
-    const hoverCardIdx = Number(hoverIndex.split('-').pop())
+    const dragCardIdx = dragIndex.cardIdx
+    const hoverCardIdx = hoverIndex.cardIdx
 
     // dragged card
     let draggedCard = board.getIn(['columns', dragColumnIdx, 'cards', dragCardIdx])
@@ -139,12 +139,12 @@ class Board extends Component {
       <div>
         {board.get('name')}
         <div className="columns">
-          {board.get('columns').map((column, idx) => {
+          {board.get('columns').map((column, columnIdx) => {
             const moveCard = (dragIndex, hoverIndex) => moveColumnCard(dragIndex, hoverIndex)
 
             return (
               <Column key={column.get('id')}
-                  index={idx}
+                  columnIdx={columnIdx}
                   column={column}
                   moveCard={moveCard} />
             )

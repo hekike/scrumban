@@ -40,16 +40,17 @@ class Column extends Component {
    * @return {JSX}
    */
   render () {
-    const { column, moveCard, index } = this.props
+    const { column, moveCard, columnIdx } = this.props
     const { cards } = this.state
 
     return (
       <div className="column">
         <h3>{column.get('name')}</h3>
         <div className="cards">
-          {cards.map((card, cardIndex) =>
+          {cards.map((card, cardIdx) =>
             <Card key={card.get('id')}
-                index={`${index}-${cardIndex}`}
+                columnIdx={columnIdx}
+                cardIdx={cardIdx}
                 id={card.get('id')}
                 card={card}
                 moveCard={moveCard} />
@@ -66,7 +67,7 @@ Column.displayName = 'Column'
 
 Column.propTypes = {
   column: PropTypes.instanceOf(ImmutableMap).isRequired,
-  index: PropTypes.number.isRequired,
+  columnIdx: PropTypes.number.isRequired,
   moveCard: PropTypes.func.isRequired
 }
 

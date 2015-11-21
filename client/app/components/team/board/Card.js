@@ -1,5 +1,6 @@
 'use strict'
 
+import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
 import { findDOMNode } from 'react-dom'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
@@ -10,11 +11,17 @@ import ItemTypes from './ItemTypes'
 
 const cardTarget = {
   hover (props, monitor, component) {
-    const dragIndex = monitor.getItem().index
-    const hoverIndex = props.index
+    const dragIndex = {
+      cardIdx: monitor.getItem().cardIdx,
+      columnIdx: monitor.getItem().columnIdx
+    }
+    const hoverIndex = {
+      cardIdx: props.cardIdx,
+      columnIdx: props.columnIdx
+    }
 
     // Don't replace items with themselves
-    if (dragIndex === hoverIndex) {
+    if (_.isEqual(dragIndex, hoverIndex)) {
       return
     }
 
@@ -35,12 +42,12 @@ const cardTarget = {
     // When dragging upwards, only move when the cursor is above 50%
 
     // Dragging downwards
-    if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+    if (dragIndex.cardIdx < hoverIndex.cardIdx && hoverClientY < hoverMiddleY) {
       return
     }
 
     // Dragging upwards
-    if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+    if (dragIndex.cardIdx > hoverIndex.cardIdx && hoverClientY > hoverMiddleY) {
       return
     }
 
@@ -51,7 +58,8 @@ const cardTarget = {
     // Generally it's better to avoid mutations,
     // but it's good here for the sake of performance
     // to avoid expensive index searches.
-    monitor.getItem().index = hoverIndex
+    monitor.getItem().columnIdx = hoverIndex.columnIdx
+    monitor.getItem().cardIdx = hoverIndex.cardIdx
   }
 }
 
@@ -59,7 +67,8 @@ const cardSource = {
   beginDrag (props) {
     return {
       id: props.id,
-      index: props.index
+      columnIdx: props.columnIdx,
+      cardIdx: props.cardIdx
     }
   }
 }
@@ -97,7 +106,8 @@ Card.propTypes = {
 
   connectDragSource: PropTypes.func.isRequired,
   connectDropTarget: PropTypes.func.isRequired,
-  index: PropTypes.string.isRequired,
+  columnIdx: PropTypes.number.isRequired,
+  cardIdx: PropTypes.number.isRequired,
   isDragging: PropTypes.bool.isRequired,
   id: PropTypes.string.isRequired,
   moveCard: PropTypes.func.isRequired
