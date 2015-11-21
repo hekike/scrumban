@@ -55,6 +55,7 @@ class Board extends Component {
 
     this.loadData = this.loadData.bind(this)
     this.moveCard = this.moveCard.bind(this)
+    this.moveColumn = this.moveColumn.bind(this)
   }
 
   /**
@@ -99,6 +100,35 @@ class Board extends Component {
   }
 
   /**
+   * @method moveColumn
+   * @param {Number} dragIndex
+   * @param {Number} hoverIndex
+   */
+  moveColumn (dragIndex, hoverIndex) {
+    const { board } = this.state
+
+    const dragColumnIdx = dragIndex.columnIdx
+    const hoverColumnIdx = hoverIndex.columnIdx
+
+    // dragged column
+    let draggedColumn = board.getIn(['columns', dragColumnIdx])
+
+    // remove from source column
+    let newBoard = board.updateIn(['columns'], columns =>
+      columns.splice(dragColumnIdx, 1)
+    )
+
+    // add to target column
+    newBoard = newBoard.updateIn(['columns'], columns =>
+      columns.splice(hoverColumnIdx, 0, draggedColumn)
+    )
+
+    this.setState({
+      board: newBoard
+    })
+  }
+
+  /**
    * @method loadData
    */
   loadData () {
@@ -129,7 +159,7 @@ class Board extends Component {
    */
   boardRender () {
     const { board } = this.state
-    const { moveCard } = this
+    const { moveColumn, moveCard } = this
 
     if (!board) {
       return
@@ -142,8 +172,10 @@ class Board extends Component {
           {board.get('columns').map((column, columnIdx) => {
             return (
               <Column key={column.get('id')}
+                  id={column.get('id')}
                   columnIdx={columnIdx}
                   column={column}
+                  moveColumn={moveColumn}
                   moveCard={moveCard} />
             )
           })}
