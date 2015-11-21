@@ -68,11 +68,20 @@ const dndSource = {
     return {
       id: props.id,
       columnIdx: props.columnIdx,
-      cardIdx: props.cardIdx
+      originalColumnIdx: props.columnIdx
     }
   },
   isDragging (props, monitor) {
     return props.id === monitor.getItem().id
+  },
+  endDrag (props, monitor) {
+    const monitorItem = monitor.getItem()
+    const { orderColumn } = props
+
+    orderColumn({
+      source: monitorItem.originalColumnIdx,
+      target: monitorItem.columnIdx
+    })
   }
 }
 
@@ -147,7 +156,8 @@ Column.propTypes = {
   connectDropTarget: PropTypes.func.isRequired,
   isDragging: PropTypes.bool.isRequired,
   moveCard: PropTypes.func.isRequired,
-  moveColumn: PropTypes.func.isRequired
+  moveColumn: PropTypes.func.isRequired,
+  orderColumn: PropTypes.func.isRequired
 }
 
 const WithTarget = DropTarget(ItemTypes.COLUMN, dndTarget, connect => ({

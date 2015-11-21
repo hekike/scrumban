@@ -129,6 +129,7 @@ class Board extends Component {
   boardRender () {
     const { board } = this.state
     const { moveColumn, moveCard } = this
+    const { sendColumnOrder } = this.props
 
     if (!board) {
       return
@@ -139,11 +140,15 @@ class Board extends Component {
         {board.get('name')}
         <div className="columns">
           {board.get('columns').map((column, columnIdx) => {
+            const orderColumn = (order) =>
+              sendColumnOrder(board.get('teamId'), board.get('id'), column.get('id'), order)
+
             return (
               <Column key={column.get('id')}
                   id={column.get('id')}
                   columnIdx={columnIdx}
                   column={column}
+                  orderColumn={orderColumn}
                   moveColumn={moveColumn}
                   moveCard={moveCard} />
             )
@@ -193,9 +198,12 @@ function mapStateToProps (state) {
  */
 function mapDispatchToProps (dispatch) {
   const { fetchBoardById } = actions.board
+  const { sendColumnOrder } = actions.column
 
   return {
-    fetchBoardById: (teamId, boardId) => dispatch(fetchBoardById(teamId, boardId))
+    fetchBoardById: (teamId, boardId) => dispatch(fetchBoardById(teamId, boardId)),
+    sendColumnOrder: (teamId, boardId, columnId, order) =>
+      dispatch(sendColumnOrder(teamId, boardId, columnId, order))
   }
 }
 
@@ -206,7 +214,8 @@ Board.propTypes = {
       boardId: PropTypes.string.isRequired
     })
   }).isRequired,
-  fetchBoardById: PropTypes.func.isRequired
+  fetchBoardById: PropTypes.func.isRequired,
+  sendColumnOrder: PropTypes.func.isRequired
 }
 
 const BoardConnected = connect(mapStateToProps, mapDispatchToProps)(Board)

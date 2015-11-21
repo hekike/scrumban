@@ -21,7 +21,7 @@ module.exports = function *() {
     column = yield query.run()
   } catch (err) {
     if (err instanceof Errors.DocumentNotFound) {
-      this.throw(404, 'board not found')
+      this.throw(404, 'column not found')
     }
 
     throw err
