@@ -40,10 +40,10 @@
     "winston": "^2.1.1"
   },
   "devDependencies": {
-    "babel-core": "^6.1.21",
+    "babel-core": "^6.2.1",
     "babel-loader": "^6.2.0",
     "babel-plugin-react-transform": "^1.1.1",
-    "babel-polyfill": "^6.1.19",
+    "babel-polyfill": "^6.2.0",
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-react": "^6.1.18",
     "bootstrap-less": "^3.3.8",
@@ -53,8 +53,8 @@
     "co-supertest": "0.0.10",
     "css-loader": "^0.23.0",
     "del": "^2.1.0",
-    "eslint": "^1.9.0",
-    "eslint-plugin-react": "^3.9.0",
+    "eslint": "^1.10.1",
+    "eslint-plugin-react": "^3.10.0",
     "eslint-plugin-standard": "^1.3.1",
     "extract-text-webpack-plugin": "^0.9.1",
     "file-loader": "^0.8.4",
@@ -72,8 +72,8 @@
     "less-plugin-clean-css": "^1.5.1",
     "mocha": "^2.3.4",
     "react": "^0.14.3",
-    "react-addons-linked-state-mixin": "^0.14.2",
-    "react-addons-pure-render-mixin": "^0.14.2",
+    "react-addons-linked-state-mixin": "^0.14.3",
+    "react-addons-pure-render-mixin": "^0.14.3",
     "react-bootstrap": "^0.28.1",
     "react-dnd": "^2.0.2",
     "react-dnd-html5-backend": "^2.0.0",
@@ -85,11 +85,11 @@
     "redux-router": "^1.0.0-beta4",
     "redux-thunk": "^1.0.0",
     "require-dir": "^0.3.0",
-    "run-sequence": "^1.1.4",
+    "run-sequence": "^1.1.5",
     "sinon-chai": "^2.8.0",
     "style-loader": "^0.13.0",
     "supertest": "^1.1.0",
     "url-loader": "^0.5.6",
-    "webpack": "^1.12.6"
+    "webpack": "^1.12.8"
   }
 }
