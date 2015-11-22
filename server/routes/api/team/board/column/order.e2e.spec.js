@@ -29,13 +29,13 @@ describe('PUT /api/team/:teamId/board/:boardId/column/:columnId/order', function
     team = yield teamFixtures.create([user.id])
     board = yield boardFixtures.create(team.id)
     let columns = yield [
-      yield columnFixtures.create(team.id, board.id, {
+      columnFixtures.create(team.id, board.id, {
         orderIndex: 0
       }),
-      yield columnFixtures.create(team.id, board.id, {
+      columnFixtures.create(team.id, board.id, {
         orderIndex: 1
       }),
-      yield columnFixtures.create(team.id, board.id, {
+      columnFixtures.create(team.id, board.id, {
         orderIndex: 2
       })
     ]

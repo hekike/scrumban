@@ -46,13 +46,13 @@ describe('PUT /api/team/:teamId/board/:boardId/card/:cardId/order', function () 
       column = yield columnFixtures.create(team.id, board.id)
 
       let cards = yield [
-        yield cardFixtures.create(team.id, board.id, column.id, {
+        cardFixtures.create(team.id, board.id, column.id, {
           orderIndex: 0
         }),
-        yield cardFixtures.create(team.id, board.id, column.id, {
+        cardFixtures.create(team.id, board.id, column.id, {
           orderIndex: 1
         }),
-        yield cardFixtures.create(team.id, board.id, column.id, {
+        cardFixtures.create(team.id, board.id, column.id, {
           orderIndex: 2
         })
       ]
@@ -116,6 +116,102 @@ describe('PUT /api/team/:teamId/board/:boardId/card/:cardId/order', function () 
       expect(cardExps[0].orderIndex).to.be.eql(1)
       expect(cardExps[1].orderIndex).to.be.eql(2)
       expect(cardExps[2].orderIndex).to.be.eql(0)
+    })
+  })
+
+  describe('move to other column', () => {
+    let column1
+    let column2
+    let card11
+    let card12
+    let card13
+    let card21
+    let card22
+
+    beforeEach(function *() {
+      let columns = yield [
+        columnFixtures.create(team.id, board.id),
+        columnFixtures.create(team.id, board.id)
+      ]
+
+      column1 = columns[0]
+      column2 = columns[1]
+
+      let cards = yield [
+        // column 1
+        cardFixtures.create(team.id, board.id, column1.id, {
+          orderIndex: 0
+        }),
+        cardFixtures.create(team.id, board.id, column1.id, {
+          orderIndex: 1
+        }),
+        cardFixtures.create(team.id, board.id, column1.id, {
+          orderIndex: 2
+        }),
+
+        // column 2
+        cardFixtures.create(team.id, board.id, column2.id, {
+          orderIndex: 0
+        }),
+        cardFixtures.create(team.id, board.id, column2.id, {
+          orderIndex: 1
+        })
+      ]
+      card11 = cards[0]
+      card12 = cards[1]
+      card13 = cards[2]
+      card21 = cards[3]
+      card22 = cards[4]
+    })
+
+    afterEach(function *() {
+      yield [
+        columnFixtures.destroy(column1),
+        columnFixtures.destroy(column2),
+        cardFixtures.destroy(card11),
+        cardFixtures.destroy(card12),
+        cardFixtures.destroy(card13),
+        cardFixtures.destroy(card21),
+        cardFixtures.destroy(card22)
+      ]
+    })
+
+    it('should move card between columns', function * () {
+      yield request(server.listen())
+        .put(`/api/team/${team.id}/board/${board.id}/card/${card12.id}/order`)
+        .send({
+          data: {
+            columnId: column2.id,
+            orderIndex: 1
+          }
+        })
+        .set('Authorization', `Bearer ${token}`)
+        .expect(204)
+        .end()
+
+      const cardExps = yield [
+        Card.get(card11.id).run(),
+        Card.get(card12.id).run(),
+        Card.get(card13.id).run(),
+        Card.get(card21.id).run(),
+        Card.get(card22.id).run()
+      ]
+
+      // update moved card (moved from column 1 -> column 2)
+      expect(cardExps[1].columnId).to.be.eql(column2.id)
+      expect(cardExps[1].orderIndex).to.be.eql(1)
+
+      // column 1
+      expect(cardExps[0].orderIndex).to.be.eql(0)
+      expect(cardExps[0].columnId).to.be.eql(column1.id)
+      expect(cardExps[2].orderIndex).to.be.eql(1)
+      expect(cardExps[2].columnId).to.be.eql(column1.id)
+
+      // column 2
+      expect(cardExps[3].orderIndex).to.be.eql(0)
+      expect(cardExps[3].columnId).to.be.eql(column2.id)
+      expect(cardExps[4].orderIndex).to.be.eql(2)
+      expect(cardExps[4].columnId).to.be.eql(column2.id)
     })
   })
 

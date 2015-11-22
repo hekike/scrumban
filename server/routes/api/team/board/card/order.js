@@ -113,7 +113,7 @@ module.exports = function *() {
         .and(r.row('orderIndex').ge(body.data.orderIndex))
       )
       .update({
-        orderIndex: r.row('orderIndex').sub(1)
+        orderIndex: r.row('orderIndex').add(1)
       })
 
     yield [updateSpecific, updateInOldColumn, updateInNewColumn]
