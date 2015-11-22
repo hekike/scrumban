@@ -30,10 +30,10 @@ describe('DELETE /api/team/:teamId/board/:boardId/column/:columnId', function ()
     team = yield teamFixtures.create([user.id])
     board = yield boardFixtures.create(team.id)
     let columns = yield [
-      yield columnFixtures.create(board.id, {
+      yield columnFixtures.create(team.id, board.id, {
         orderIndex: 0
       }),
-      yield columnFixtures.create(board.id, {
+      yield columnFixtures.create(team.id, board.id, {
         orderIndex: 1
       })
     ]

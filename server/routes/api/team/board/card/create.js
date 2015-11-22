@@ -5,7 +5,6 @@ const logger = require('winston')
 
 const routesUtils = require('../../../../../utils/routes')
 const schema = require('./schema').create
-const Board = require('../../../../../models/board')
 const Card = require('../../../../../models/card')
 const Column = require('../../../../../models/column')
 const thinky = require('../../../../../models/thinky')
@@ -18,43 +17,40 @@ module.exports = function *() {
   const body = yield routesUtils.joiValidate(this, schema)
   const teamId = this.params.teamId
   const boardId = this.params.boardId
-  let result
+  let column
 
-  logger.info(`create card ${body.data.name} for board ${boardId}`)
+  logger.info(`create card ${body.data.name} for team {$teamId} and board ${boardId}`)
 
+  // get related column
   try {
-    result = yield {
-      board: Board.get(boardId).run(),
-      column: Column.get(body.data.columnId).run()
-    }
+    column = yield Column.get(body.data.columnId).pluck('teamId', 'boardId').run()
   } catch (err) {
     if (err instanceof Errors.DocumentNotFound) {
-      this.throw(404, 'board or team not found')
+      this.throw(404, 'column, board or team not found')
     }
 
     throw err
   }
 
   // auth
-  if (result.board.teamId !== teamId) {
-    this.throw(401, 'unauthorized board access')
-  }
-
-  if (result.column.boardId !== boardId) {
+  if (column.teamId !== teamId && column.boardId !== boardId) {
     this.throw(401, 'unauthorized column access')
   }
 
   // create card
-  const columnCardCount = yield Card
+  const orderIndex = yield Card
     .filter({
+      teamId: teamId,
+      boardId: boardId,
       columnId: body.data.columnId
     })
     .count()
     .execute()
 
   const data = _.merge({}, body.data, {
+    teamId: teamId,
     boardId: boardId,
-    orderIndex: columnCardCount
+    orderIndex: orderIndex
   })
 
   // create card

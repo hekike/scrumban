@@ -7,7 +7,7 @@ const r = thinky.r
 
 const Board = thinky.createModel('Board', {
   id: type.string(),
-  teamId: type.string(),
+  teamId: type.string().required(),
   name: type.string(),
   createdAt: type.date().default(r.now())
 })

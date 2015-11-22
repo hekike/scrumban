@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const Column = require('../models/column')
 
-function * create (boardId, params) {
+function * create (teamId, boardId, params) {
   params = _.defaults(params || {}, {
     name: Math.random().toString(36).substring(7),
     orderIndex: 0
@@ -12,6 +12,7 @@ function * create (boardId, params) {
   let column = new Column({
     name: params.name,
     boardId: boardId,
+    teamId: teamId,
     orderIndex: params.orderIndex
   })
   column = yield column.saveAll({

@@ -44,6 +44,7 @@ module.exports = function *() {
     .execute()
 
   const data = _.merge({}, body.data, {
+    teamId: teamId,
     boardId: boardId,
     orderIndex: boardColumnCount
   })

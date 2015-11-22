@@ -69,7 +69,7 @@
 //     let columnExisting
 //
 //     beforeEach(function *() {
-//       columnExisting = yield columnFixtures.create(board.id)
+//       columnExisting = yield columnFixtures.create(team.id, board.id)
 //     })
 //
 //     afterEach(function *() {

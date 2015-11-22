@@ -1,5 +1,6 @@
 'use strict'
 
+const logger = require('winston')
 const Column = require('../../../../../models/column')
 const thinky = require('../../../../../models/thinky')
 const routesUtils = require('../../../../../utils/routes')
@@ -12,25 +13,36 @@ const r = thinky.r
 */
 module.exports = function *() {
   const body = yield routesUtils.joiValidate(this, schema)
-  const routeColumnId = this.params.columnId
+  const columnId = this.params.columnId
+  const teamId = this.params.teamId
+  const boardId = this.params.boardId
   let column
 
-  // query
-  let query = Column
-    .get(routeColumnId)
+  logger.info(`order column ${columnId} from team {$teamId} and board ${boardId}`)
+  logger.info(`order column ${columnId} to`, body.data)
 
+  // get related column
   try {
-    column = yield query.run()
+    column = yield Column
+      .get(columnId)
+      .pluck('id', 'teamId', 'boardId', 'orderIndex')
+      .run()
   } catch (err) {
     if (err instanceof Errors.DocumentNotFound) {
-      this.throw(404, 'column not found')
+      this.throw(404, 'column, board or team not found')
     }
 
     throw err
   }
 
+  // auth
+  if (column.teamId !== teamId && column.boardId !== boardId) {
+    this.throw(401, 'unauthorized column access')
+  }
+
+  // update order
   const updateSpecific = Column
-    .get(routeColumnId)
+    .get(columnId)
     .update({
       orderIndex: body.data.orderIndex
     })
@@ -42,7 +54,7 @@ module.exports = function *() {
     updateOthers = Column
       .filter(
         r.row('boardId').eq(column.boardId)
-        .and(r.row('id').ne(routeColumnId))
+        .and(r.row('id').ne(columnId))
         .and(r.row('orderIndex').ge(column.orderIndex))
         .and(r.row('orderIndex').le(body.data.orderIndex))
       )
@@ -55,7 +67,7 @@ module.exports = function *() {
     updateOthers = Column
       .filter(
         r.row('boardId').eq(column.boardId)
-        .and(r.row('id').ne(routeColumnId))
+        .and(r.row('id').ne(columnId))
         .and(r.row('orderIndex').ge(body.data.orderIndex))
         .and(r.row('orderIndex').le(column.orderIndex))
       )

@@ -64,10 +64,10 @@ describe('GET /api/team/:teamId/board/:boardId', function () {
 
     beforeEach(function *() {
       let columns = yield [
-        yield columnFixtures.create(board.id, {
+        yield columnFixtures.create(team.id, board.id, {
           orderIndex: 0
         }),
-        yield columnFixtures.create(board.id, {
+        yield columnFixtures.create(team.id, board.id, {
           orderIndex: 1
         })
       ]
@@ -100,6 +100,7 @@ describe('GET /api/team/:teamId/board/:boardId', function () {
             id: column1.id,
             name: column1.name,
             createdAt: column1.createdAt.toISOString(),
+            teamId: team.id,
             boardId: board.id,
             isRemoved: column1.isRemoved,
             orderIndex: column1.orderIndex
@@ -108,6 +109,7 @@ describe('GET /api/team/:teamId/board/:boardId', function () {
             id: column2.id,
             name: column2.name,
             createdAt: column2.createdAt.toISOString(),
+            teamId: team.id,
             boardId: board.id,
             isRemoved: column2.isRemoved,
             orderIndex: column2.orderIndex

@@ -56,6 +56,7 @@ describe('POST /api/team/:teamId/board/column', function () {
       id: column.id,
       name: 'My Column',
       createdAt: column.createdAt.toISOString(),
+      teamId: team.id,
       boardId: board.id,
       isRemoved: false,
       orderIndex: 0
@@ -68,7 +69,7 @@ describe('POST /api/team/:teamId/board/column', function () {
     let columnExisting
 
     beforeEach(function *() {
-      columnExisting = yield columnFixtures.create(board.id)
+      columnExisting = yield columnFixtures.create(team.id, board.id)
     })
 
     afterEach(function *() {
