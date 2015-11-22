@@ -152,7 +152,7 @@ class Board extends Component {
 
     return (
       <div className="board">
-        {board.get('name')}
+        <strong>{board.get('name')}</strong>
         <div className="container-columns">
           <div className="columns" style={columnsStyle}>
             {board.get('columns').map((column, columnIdx) => {
@@ -191,7 +191,6 @@ class Board extends Component {
     return (
       <div className="row">
         <div className="col-md-12">
-          <h1>{'Board'}</h1>
           {isLoading ? <Loader /> : this.boardRender()}
         </div>
       </div>
