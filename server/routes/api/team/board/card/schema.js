@@ -11,7 +11,8 @@ const create = joi.object({
 
 const order = joi.object({
   data: joi.object({
-    orderIndex: joi.number().required()
+    orderIndex: joi.number().required(),
+    columnId: joi.string().required()
   }).required()
 })
 

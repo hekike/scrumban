@@ -33,7 +33,7 @@ module.exports = function *() {
   }
 
   // auth
-  if (column.teamId !== teamId && column.boardId !== boardId) {
+  if (column.teamId !== teamId || column.boardId !== boardId) {
     this.throw(401, 'unauthorized column access')
   }
 

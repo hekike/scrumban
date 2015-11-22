@@ -103,8 +103,13 @@ describe('PUT /api/team/:teamId/board/:boardId/column/:columnId/order', function
 
   it('should handle if column not found', function * () {
     yield request(server.listen())
-      .delete(`/api/team/${team.id}/board/${board.id}/column/aaa`)
+      .put(`/api/team/${team.id}/board/${board.id}/column/aaa/order`)
       .set('Authorization', `Bearer ${token}`)
+      .send({
+        data: {
+          orderIndex: 0
+        }
+      })
       .expect(404)
       .expect('Content-Type', /application\/json/)
       .end()
