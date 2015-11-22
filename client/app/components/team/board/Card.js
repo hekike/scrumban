@@ -76,6 +76,22 @@ const cardSource = {
   },
   isDragging (props, monitor) {
     return props.id === monitor.getItem().id
+  },
+  endDrag (props, monitor) {
+    const monitorItem = monitor.getItem()
+    const { orderCard, findColumnByIdx } = props
+
+    const sourceColumn = findColumnByIdx(monitorItem.originalColumnIdx)
+    const targetColumn = findColumnByIdx(monitorItem.columnIdx)
+
+    orderCard({
+      sourceColumnId: sourceColumn ? sourceColumn.get('id') : null,
+      sourceColumn: monitorItem.originalColumnIdx,
+      targetColumnId: targetColumn ? targetColumn.get('id') : null,
+      targetColumn: monitorItem.columnIdx,
+      sourceCard: monitorItem.originalCardIdx,
+      targetCard: monitorItem.cardIdx
+    })
   }
 }
 
@@ -160,7 +176,8 @@ Card.propTypes = {
   cardIdx: PropTypes.number.isRequired,
   isDragging: PropTypes.bool.isRequired,
   id: PropTypes.string.isRequired,
-  moveCard: PropTypes.func.isRequired
+  moveCard: PropTypes.func.isRequired,
+  findColumnByIdx: PropTypes.func.isRequired
 }
 
 const CardWithTarget = DropTarget(ItemTypes.CARD, cardTarget, connect => ({

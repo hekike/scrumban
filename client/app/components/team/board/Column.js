@@ -118,8 +118,8 @@ class Column extends Component {
    * @return {JSX}
    */
   render () {
-    const { column, moveCard, columnIdx, isDragging,
-      connectDragSource, connectDropTarget } = this.props
+    const { column, moveCard, columnIdx, isDragging, orderCard,
+      connectDragSource, connectDropTarget, findColumnByIdx } = this.props
     const { cards } = this.state
 
     const cardStyle = {
@@ -130,14 +130,18 @@ class Column extends Component {
       <div style={cardStyle} className="column">
         <h3>{column.get('name')}</h3>
         <div className="cards">
-          {cards.map((card, cardIdx) =>
-            <Card key={card.get('id')}
+          {cards.map((card, cardIdx) => {
+            const orderCardWithId = order => orderCard(card.get('id'), order)
+
+            return (<Card key={card.get('id')}
                 columnIdx={columnIdx}
                 cardIdx={cardIdx}
                 id={card.get('id')}
                 card={card}
-                moveCard={moveCard} />
-          )}
+                orderCard={orderCardWithId}
+                findColumnByIdx={findColumnByIdx}
+                moveCard={moveCard} />)
+          })}
         </div>
       </div>
     ))
@@ -157,7 +161,9 @@ Column.propTypes = {
   isDragging: PropTypes.bool.isRequired,
   moveCard: PropTypes.func.isRequired,
   moveColumn: PropTypes.func.isRequired,
-  orderColumn: PropTypes.func.isRequired
+  orderColumn: PropTypes.func.isRequired,
+  orderCard: PropTypes.func.isRequired,
+  findColumnByIdx: PropTypes.func.isRequired
 }
 
 const WithTarget = DropTarget(ItemTypes.COLUMN, dndTarget, connect => ({

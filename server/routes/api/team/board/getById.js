@@ -52,13 +52,12 @@ module.exports = function *() {
       column.cards = _.filter(board.cards, {
         columnId: column.id
       })
+      column.cards = _.sortBy(column.cards, 'orderIndex')
       return column
     })
 
     board.cards = undefined
   }
-
-  // board.columns = _.sortBy(board.columns, 'orderIndex')
 
   this.body = board
 }
