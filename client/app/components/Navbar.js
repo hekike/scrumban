@@ -51,7 +51,7 @@ class NavbarComponent extends Component {
     )
 
     return (
-      <Navbar>
+      <Navbar fluid={true}>
         <NavbarBrand><Link to="/">{'Scrumban'}</Link></NavbarBrand>
         {user.get('isLogged') ? loggedInNav : null}
         <Nav navbar pullRight>

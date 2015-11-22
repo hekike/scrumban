@@ -2,6 +2,7 @@
 <html{% if(o.htmlWebpackPlugin.files.manifest) { %} manifest="{%= o.htmlWebpackPlugin.files.manifest %}"{% } %}>
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1,width=device-width,initial-scale=1,user-scalable=0">
     <title>{%=o.htmlWebpackPlugin.options.title || 'Trace by RisingStack'%}</title>
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
     {% if (o.htmlWebpackPlugin.files.favicon) { %}

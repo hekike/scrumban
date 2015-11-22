@@ -142,35 +142,40 @@ class Board extends Component {
     const { board } = this.state
     const { moveColumn, moveCard, findColumnByIdx } = this
     const { sendColumnOrder, sendCardOrder } = this.props
+    const columnsStyle = {
+      width: (Math.round(313.33 * (board.get('columns').count()))) + 'px'
+    }
 
     if (!board) {
       return
     }
 
     return (
-      <div>
+      <div className="board">
         {board.get('name')}
-        <div className="columns">
-          {board.get('columns').map((column, columnIdx) => {
-            const orderColumn = (order) =>
-              sendColumnOrder(board.get('teamId'), board.get('id'), column.get('id'), order)
+        <div className="container-columns">
+          <div className="columns" style={columnsStyle}>
+            {board.get('columns').map((column, columnIdx) => {
+              const orderColumn = (order) =>
+                sendColumnOrder(board.get('teamId'), board.get('id'), column.get('id'), order)
 
-            const orderCard = (cardId, order) =>
-              sendCardOrder(board.get('teamId'), board.get('id'),
-                cardId, order)
+              const orderCard = (cardId, order) =>
+                sendCardOrder(board.get('teamId'), board.get('id'),
+                  cardId, order)
 
-            return (
-              <Column key={column.get('id')}
-                  id={column.get('id')}
-                  columnIdx={columnIdx}
-                  column={column}
-                  orderColumn={orderColumn}
-                  orderCard={orderCard}
-                  moveColumn={moveColumn}
-                  findColumnByIdx={findColumnByIdx}
-                  moveCard={moveCard} />
-            )
-          })}
+              return (
+                <Column key={column.get('id')}
+                    id={column.get('id')}
+                    columnIdx={columnIdx}
+                    column={column}
+                    orderColumn={orderColumn}
+                    orderCard={orderCard}
+                    moveColumn={moveColumn}
+                    findColumnByIdx={findColumnByIdx}
+                    moveCard={moveCard} />
+              )
+            })}
+          </div>
         </div>
       </div>
     )

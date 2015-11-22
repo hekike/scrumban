@@ -40,7 +40,7 @@ class App extends Component {
     return (
       <div>
         <Navbar user={user} fetchLogout={fetchLogout} pushState={pushState} />
-        <div className="container">
+        <div className="container-fluid">
           <AppError app={app} />
           {children}
         </div>
