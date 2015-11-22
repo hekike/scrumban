@@ -1,69 +1,13 @@
 'use strict'
 
 import React, { Component, PropTypes } from 'react'
-import { findDOMNode } from 'react-dom'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { onClass as classMixin } from 'react-mixin'
 import { DropTarget } from 'react-dnd'
 import ItemTypes from './ItemTypes'
 import Modal from 'react-bootstrap/lib/Modal'
 import Button from 'react-bootstrap/lib/Button'
-
-const cardTarget = {
-  hover (props, monitor, component) {
-    const monitorItem = monitor.getItem()
-
-    const dragIndex = {
-      cardIdx: monitor.getItem().cardIdx,
-      columnIdx: monitor.getItem().columnIdx
-    }
-    const hoverIndex = {
-      cardIdx: props.cardIdx,
-      columnIdx: props.columnIdx
-    }
-
-    // Don't replace items with themselves
-    if (monitorItem.id === props.id) {
-      return
-    }
-
-    // Determine rectangle on screen
-    const hoverBoundingRect = findDOMNode(component).getBoundingClientRect()
-
-    // Get vertical middle
-    const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-
-    // Determine mouse position
-    const clientOffset = monitor.getClientOffset()
-
-    // Get pixels to the top
-    const hoverClientY = clientOffset.y - hoverBoundingRect.top
-
-    // Only perform the move when the mouse has crossed half of the items height
-    // When dragging downwards, only move when the cursor is below 50%
-    // When dragging upwards, only move when the cursor is above 50%
-
-    // Dragging downwards
-    if (dragIndex.cardIdx < hoverIndex.cardIdx && hoverClientY < hoverMiddleY) {
-      return
-    }
-
-    // Dragging upwards
-    if (dragIndex.cardIdx > hoverIndex.cardIdx && hoverClientY > hoverMiddleY) {
-      return
-    }
-
-    // Time to actually perform the action
-    props.moveCard(dragIndex, hoverIndex)
-
-    // Note: we're mutating the monitor item here!
-    // Generally it's better to avoid mutations,
-    // but it's good here for the sake of performance
-    // to avoid expensive index searches.
-    monitor.getItem().columnIdx = hoverIndex.columnIdx
-    monitor.getItem().cardIdx = hoverIndex.cardIdx
-  }
-}
+import { cardTarget } from './cardDnd'
 
 /**
 * @class CardAdd
