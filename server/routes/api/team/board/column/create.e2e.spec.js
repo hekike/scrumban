@@ -34,7 +34,7 @@ describe('POST /api/team/:teamId/board/column', function () {
     ]
   })
 
-  it('should create a board', function * () {
+  it('should create a column', function * () {
     const resp = yield request(server.listen())
       .post(`/api/team/${team.id}/board/${board.id}/column`)
       .set('Authorization', `Bearer ${token}`)
@@ -78,7 +78,7 @@ describe('POST /api/team/:teamId/board/column', function () {
       ]
     })
 
-    it('should create a board', function * () {
+    it('should create a column', function * () {
       const resp = yield request(server.listen())
         .post(`/api/team/${team.id}/board/${board.id}/column`)
         .set('Authorization', `Bearer ${token}`)

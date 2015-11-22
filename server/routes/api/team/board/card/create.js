@@ -23,7 +23,7 @@ module.exports = function *() {
 
   // get related column
   try {
-    column = yield Column.get(body.data.columnId).pluck('teamId', 'boardId').run()
+    column = yield Column.get(body.data.columnId).pluck('id', 'teamId', 'boardId').run()
   } catch (err) {
     if (err instanceof Errors.DocumentNotFound) {
       this.throw(404, 'column, board or team not found')
@@ -33,7 +33,7 @@ module.exports = function *() {
   }
 
   // auth
-  if (column.teamId !== teamId && column.boardId !== boardId) {
+  if (column.teamId !== teamId || column.boardId !== boardId) {
     this.throw(401, 'unauthorized column access')
   }
 
