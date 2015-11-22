@@ -48,8 +48,6 @@ function * errorHandler (next) {
     this.status = body.statusCode
     this.body = body
 
-    // console.log(err)
-
     // since we handled this manually we'll
     // want to delegate to the regular app
     // level error handling as well so that

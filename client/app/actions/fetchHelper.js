@@ -41,6 +41,9 @@ export function handleError (dispatch, error) {
     errorType = 'fetch'
   }
 
+  console.trace()
+  console.error(error)
+
   dispatch(appError({
     errorType: errorType,
     error: error

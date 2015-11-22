@@ -5,7 +5,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { onClass as classMixin } from 'react-mixin'
 import { fromJS } from 'immutable'
 import { connect } from 'react-redux'
-import { pushState } from 'redux-router'
 import actions from '../../actions'
 
 import Loader from '../../components/Loader'
@@ -84,13 +83,11 @@ function mapDispatchToProps (dispatch) {
   const { fetchTeams } = actions.team
 
   return {
-    fetchTeams: include => dispatch(fetchTeams(include)),
-    pushState: (state, path) => dispatch(pushState(state, path))
+    fetchTeams: include => dispatch(fetchTeams(include))
   }
 }
 
 Dashboard.propTypes = {
-  pushState: PropTypes.func.isRequired,
   fetchTeams: PropTypes.func.isRequired
 }
 

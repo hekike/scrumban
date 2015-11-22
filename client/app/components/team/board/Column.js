@@ -9,6 +9,7 @@ import { DragSource, DropTarget } from 'react-dnd'
 import ItemTypes from './ItemTypes'
 
 import Card from './Card'
+import CardAdd from './CardAdd'
 
 const dndTarget = {
   hover (props, monitor, component) {
@@ -142,6 +143,11 @@ class Column extends Component {
                 findColumnByIdx={findColumnByIdx}
                 moveCard={moveCard} />)
           })}
+          <CardAdd key={columnIdx + '-add-card'}
+              columnIdx={columnIdx}
+              cardIdx={cards.count()}
+              id={columnIdx + '-add-card'}
+              moveCard={moveCard} />
         </div>
       </div>
     ))

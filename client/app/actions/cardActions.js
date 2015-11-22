@@ -2,7 +2,7 @@
 
 import fetch from 'isomorphic-fetch'
 import config from '../../../config/client'
-import { checkFetchStatus, parseFetchJSON, handleError } from './fetchHelper'
+import { checkFetchStatus, handleError } from './fetchHelper'
 
 export const CARD_SET_ORDER = 'CARD_SET_ORDER'
 
@@ -51,8 +51,7 @@ export function sendCardOrder (teamId, boardId, cardId, order) {
       })
     })
       .then(checkFetchStatus)
-      .then(parseFetchJSON)
-      .then(json => dispatch(setOrder(json)))
+      .then(() => dispatch(setOrder()))
       .catch(err => handleError(dispatch, err))
   }
 }

@@ -2,7 +2,7 @@
 
 import fetch from 'isomorphic-fetch'
 import config from '../../../config/client'
-import { checkFetchStatus, parseFetchJSON, handleError } from './fetchHelper'
+import { checkFetchStatus, handleError } from './fetchHelper'
 
 export const COLUMN_SET_ORDER = 'COLUMN_SET_ORDER'
 
@@ -50,8 +50,7 @@ export function sendColumnOrder (teamId, boardId, columnId, order) {
       })
     })
       .then(checkFetchStatus)
-      .then(parseFetchJSON)
-      .then(json => dispatch(setOrder(json)))
+      .then(() => dispatch(setOrder()))
       .catch(err => handleError(dispatch, err))
   }
 }
