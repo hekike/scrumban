@@ -52,7 +52,7 @@ module.exports = function *() {
       })
 
     yield [
-      column.delete(),
+      column.purge(),
       updateOrderIndex.execute()
     ]
   }

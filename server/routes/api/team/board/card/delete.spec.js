@@ -4,7 +4,6 @@ const request = require('co-supertest')
 const expect = require('chai').expect
 
 const server = require('../../../../../server')
-const Column = require('../../../../../models/column')
 const Card = require('../../../../../models/card')
 const thinky = require('../../../../../models/thinky')
 const Errors = thinky.Errors
@@ -15,13 +14,14 @@ const boardFixtures = require('../../../../../fixtures/board')
 const columnFixtures = require('../../../../../fixtures/column')
 const cardFixtures = require('../../../../../fixtures/card')
 
-describe('DELETE /api/team/:teamId/board/:boardId/column/:columnId', function () {
+describe('DELETE /api/team/:teamId/board/:boardId/card/:cardId', function () {
   let user
   let token
   let team
   let board
-  let column1
-  let column2
+  let column
+  let card1
+  let card2
 
   beforeEach(function *() {
     const result = yield userFixtures.createLoggedInUser()
@@ -31,16 +31,18 @@ describe('DELETE /api/team/:teamId/board/:boardId/column/:columnId', function ()
 
     team = yield teamFixtures.create([user.id])
     board = yield boardFixtures.create(team.id)
-    let columns = yield [
-      yield columnFixtures.create(team.id, board.id, {
+    column = yield columnFixtures.create(board.id, team.id)
+
+    let cards = yield [
+      yield cardFixtures.create(team.id, board.id, column.id, {
         orderIndex: 0
       }),
-      yield columnFixtures.create(team.id, board.id, {
+      yield cardFixtures.create(team.id, board.id, column.id, {
         orderIndex: 1
       })
     ]
-    column1 = columns[0]
-    column2 = columns[1]
+    card1 = cards[0]
+    card2 = cards[1]
   })
 
   afterEach(function *() {
@@ -48,23 +50,24 @@ describe('DELETE /api/team/:teamId/board/:boardId/column/:columnId', function ()
       userFixtures.destroyLoggedInUser(user),
       teamFixtures.destroy(team),
       boardFixtures.destroy(board),
-      columnFixtures.destroy(column1),
-      columnFixtures.destroy(column2)
+      columnFixtures.destroy(column),
+      cardFixtures.destroy(card1),
+      cardFixtures.destroy(card2)
     ]
   })
 
   it('should hard remove by id and update order indexes', function * () {
     yield request(server.listen())
-      .delete(`/api/team/${team.id}/board/${board.id}/column/${column1.id}`)
+      .delete(`/api/team/${team.id}/board/${board.id}/card/${card1.id}`)
       .set('Authorization', `Bearer ${token}`)
       .expect(204)
       .end()
 
-    const column = yield Column.get(column2.id).run()
-    expect(column.orderIndex).to.be.eql(0)
+    const card = yield Card.get(card2.id).run()
+    expect(card.orderIndex).to.be.eql(0)
 
     try {
-      yield Column.get(column1.id).run()
+      yield Card.get(card1.id).run()
     } catch (err) {
       expect(err).to.be.an.instanceof(Errors.DocumentNotFound)
       return
@@ -73,53 +76,22 @@ describe('DELETE /api/team/:teamId/board/:boardId/column/:columnId', function ()
     throw new Error('document find')
   })
 
-  describe('with cards', () => {
-    let card
-
-    beforeEach(function *() {
-      card = yield cardFixtures.create(team.id, board.id, column1.id)
-    })
-
-    afterEach(function *() {
-      yield [
-        cardFixtures.destroy(card)
-      ]
-    })
-
-    it.skip('should hard remove it\'s cards', function * () {
-      yield request(server.listen())
-        .delete(`/api/team/${team.id}/board/${board.id}/column/${column1.id}`)
-        .set('Authorization', `Bearer ${token}`)
-        .expect(204)
-        .end()
-
-      try {
-        yield Card.get(card.id).run()
-      } catch (err) {
-        expect(err).to.be.an.instanceof(Errors.DocumentNotFound)
-        return
-      }
-
-      throw new Error('card find')
-    })
-  })
-
   it('should soft remove by id', function * () {
     yield request(server.listen())
-      .delete(`/api/team/${team.id}/board/${board.id}/column/${column1.id}?archive=true`)
+      .delete(`/api/team/${team.id}/board/${board.id}/card/${card1.id}?archive=true`)
       .set('Authorization', `Bearer ${token}`)
       .expect(204)
       .end()
 
-    const expectColumn = yield Column.get(column1.id).run()
+    const expectCard = yield Card.get(card1.id).run()
 
-    expect(expectColumn).to.be.not.null
-    expect(expectColumn.isRemoved).to.be.true
+    expect(expectCard).to.be.not.null
+    expect(expectCard.isRemoved).to.be.true
   })
 
-  it('should handle if column not found', function * () {
+  it('should handle if card not found', function * () {
     yield request(server.listen())
-      .delete(`/api/team/${team.id}/board/${board.id}/column/aaa`)
+      .delete(`/api/team/${team.id}/board/${board.id}/card/aaa`)
       .set('Authorization', `Bearer ${token}`)
       .expect(404)
       .expect('Content-Type', /application\/json/)

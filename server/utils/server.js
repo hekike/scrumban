@@ -45,6 +45,8 @@ function * errorHandler (next) {
       body.reason = err.reason
     }
 
+    // console.log(err)
+
     this.status = body.statusCode
     this.body = body
 

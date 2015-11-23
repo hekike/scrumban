@@ -43,4 +43,8 @@ router.secured.post('/api/team/:teamId/board/:boardId/card', protect,
 router.secured.put('/api/team/:teamId/board/:boardId/card/:cardId/order', protect,
   require('./api/team/board/card/order'))
 
+router.secured.delete('/api/team/:teamId/board/:boardId/card/:cardId', protect,
+  require('./api/team/board/card/delete'))
+
+
 module.exports = router
