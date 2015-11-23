@@ -120,7 +120,8 @@ class Column extends Component {
    */
   render () {
     const { column, moveCard, columnIdx, isDragging, orderCard,
-      connectDragSource, connectDropTarget, findColumnByIdx } = this.props
+      connectDragSource, connectDropTarget, findColumnByIdx,
+      sendCardCreate, refetchBoard } = this.props
     const { cards } = this.state
 
     const cardStyle = {
@@ -146,8 +147,12 @@ class Column extends Component {
           <CardAdd key={columnIdx + '-add-card'}
               columnIdx={columnIdx}
               cardIdx={cards.count()}
-              id={columnIdx + '-add-card'}
-              moveCard={moveCard} />
+              teamId={column.get('teamId')}
+              boardId={column.get('boardId')}
+              columnId={column.get('id')}
+              moveCard={moveCard}
+              sendCardCreate={sendCardCreate}
+              refetchBoard={refetchBoard} />
         </div>
       </div>
     ))
@@ -169,7 +174,9 @@ Column.propTypes = {
   moveColumn: PropTypes.func.isRequired,
   orderColumn: PropTypes.func.isRequired,
   orderCard: PropTypes.func.isRequired,
-  findColumnByIdx: PropTypes.func.isRequired
+  findColumnByIdx: PropTypes.func.isRequired,
+  refetchBoard: PropTypes.func.isRequired,
+  sendCardCreate: PropTypes.func.isRequired
 }
 
 const WithTarget = DropTarget(ItemTypes.COLUMN, dndTarget, connect => ({

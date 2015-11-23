@@ -25,6 +25,7 @@ class Board extends Component {
       isFetched: false
     }
 
+    this.boardRender = this.boardRender.bind(this)
     this.loadData = this.loadData.bind(this)
     this.moveCard = this.moveCard.bind(this)
     this.moveColumn = this.moveColumn.bind(this)
@@ -139,15 +140,20 @@ class Board extends Component {
    * @return {JSX}
    */
   boardRender () {
-    const { board } = this.state
-    const { moveColumn, moveCard, findColumnByIdx } = this
-    const { sendColumnOrder, sendCardOrder } = this.props
-    const columnsStyle = {
-      width: (Math.round(313.33 * (board.get('columns').count()))) + 'px'
+    const { isLoading, board } = this.state
+    const { moveColumn, moveCard, findColumnByIdx, loadData } = this
+    const { sendColumnOrder, sendCardOrder, sendCardCreate } = this.props
+
+    const refetchBoard = () => loadData()
+
+    if (!board && isLoading) {
+      return (<Loader />)
+    } else if (!board) {
+      return
     }
 
-    if (!board) {
-      return
+    const columnsStyle = {
+      width: (Math.round(313.33 * (board.get('columns').count()))) + 'px'
     }
 
     return (
@@ -172,7 +178,9 @@ class Board extends Component {
                     orderCard={orderCard}
                     moveColumn={moveColumn}
                     findColumnByIdx={findColumnByIdx}
-                    moveCard={moveCard} />
+                    moveCard={moveCard}
+                    sendCardCreate={sendCardCreate}
+                    refetchBoard={refetchBoard} />
               )
             })}
           </div>
@@ -186,12 +194,12 @@ class Board extends Component {
    * @return {JSX}
    */
   render () {
-    const { isLoading } = this.state
+    const { boardRender } = this
 
     return (
       <div className="row">
         <div className="col-md-12">
-          {isLoading ? <Loader /> : this.boardRender()}
+          {boardRender()}
         </div>
       </div>
     )
@@ -221,14 +229,21 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
   const { fetchBoardById } = actions.board
   const { sendColumnOrder } = actions.column
-  const { sendCardOrder } = actions.card
+  const { sendCardOrder, sendCardCreate } = actions.card
 
   return {
+    // board
     fetchBoardById: (teamId, boardId) => dispatch(fetchBoardById(teamId, boardId)),
+
+    // column
     sendColumnOrder: (teamId, boardId, columnId, order) =>
       dispatch(sendColumnOrder(teamId, boardId, columnId, order)),
+
+    // card
     sendCardOrder: (teamId, boardId, columnId, order) =>
-      dispatch(sendCardOrder(teamId, boardId, columnId, order))
+      dispatch(sendCardOrder(teamId, boardId, columnId, order)),
+    sendCardCreate: (teamId, boardId, data) =>
+      dispatch(sendCardCreate(teamId, boardId, data))
   }
 }
 
@@ -241,7 +256,8 @@ Board.propTypes = {
   }).isRequired,
   fetchBoardById: PropTypes.func.isRequired,
   sendColumnOrder: PropTypes.func.isRequired,
-  sendCardOrder: PropTypes.func.isRequired
+  sendCardOrder: PropTypes.func.isRequired,
+  sendCardCreate: PropTypes.func.isRequired
 }
 
 const BoardConnected = connect(mapStateToProps, mapDispatchToProps)(Board)
