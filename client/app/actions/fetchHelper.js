@@ -41,13 +41,14 @@ export function handleError (dispatch, error) {
     errorType = 'fetch'
   }
 
-  console.trace()
-  console.error(error)
+  if (errorType) {
+    dispatch(appError({
+      errorType: errorType,
+      error: error
+    }))
 
-  dispatch(appError({
-    errorType: errorType,
-    error: error
-  }))
+    return
+  }
 
   throw error
 }

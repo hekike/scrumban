@@ -3,7 +3,7 @@
 import React, { Component, PropTypes } from 'react'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import { onClass as classMixin } from 'react-mixin'
-import { fromJS } from 'immutable'
+import { Map as ImmutableMap } from 'immutable'
 import { connect } from 'react-redux'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
@@ -19,16 +19,8 @@ class Board extends Component {
   constructor () {
     super()
 
-    this.state = {
-      board: null,
-      isLoading: false,
-      isFetched: false
-    }
-
     this.boardRender = this.boardRender.bind(this)
     this.loadData = this.loadData.bind(this)
-    this.moveCard = this.moveCard.bind(this)
-    this.moveColumn = this.moveColumn.bind(this)
     this.findColumnByIdx = this.findColumnByIdx.bind(this)
   }
 
@@ -36,81 +28,16 @@ class Board extends Component {
    * @method componentWillMount
    */
   componentWillMount () {
-    if (!this.state.isFetched && !this.state.isLoading) {
-      this.loadData()
+    const { board, router } = this.props
+    const { loadData } = this
+    const boardId = router.params.boardId
+
+    const needToFetch = !board.get('isFetched')
+    const isDifferentBoard = board && board.get('id') !== boardId
+
+    if ((needToFetch || isDifferentBoard) || !board.get('isLoading')) {
+      loadData()
     }
-  }
-
-  /**
-   * @method findColumnByIdx
-   * @param {Number} columnIdx
-   * @returns {ImmutableMap} column
-   */
-  findColumnByIdx (columnIdx) {
-    const { board } = this.state
-
-    return board.getIn(['columns', columnIdx])
-  }
-
-  /**
-   * @method moveCard
-   * @param {Number} dragIndex
-   * @param {Number} hoverIndex
-   */
-  moveCard (dragIndex, hoverIndex) {
-    const { board } = this.state
-
-    const dragColumnIdx = dragIndex.columnIdx
-    const hoverColumnIdx = hoverIndex.columnIdx
-
-    const dragCardIdx = dragIndex.cardIdx
-    const hoverCardIdx = hoverIndex.cardIdx
-
-    // dragged card
-    let draggedCard = board.getIn(['columns', dragColumnIdx, 'cards', dragCardIdx])
-
-    // remove from source column
-    let newBoard = board.updateIn(['columns', dragColumnIdx, 'cards'], cards =>
-      cards.splice(dragCardIdx, 1)
-    )
-
-    // add to target column
-    newBoard = newBoard.updateIn(['columns', hoverColumnIdx, 'cards'], cards =>
-      cards.splice(hoverCardIdx, 0, draggedCard)
-    )
-
-    this.setState({
-      board: newBoard
-    })
-  }
-
-  /**
-   * @method moveColumn
-   * @param {Number} dragIndex
-   * @param {Number} hoverIndex
-   */
-  moveColumn (dragIndex, hoverIndex) {
-    const { board } = this.state
-
-    const dragColumnIdx = dragIndex.columnIdx
-    const hoverColumnIdx = hoverIndex.columnIdx
-
-    // dragged column
-    let draggedColumn = board.getIn(['columns', dragColumnIdx])
-
-    // remove from source column
-    let newBoard = board.updateIn(['columns'], columns =>
-      columns.splice(dragColumnIdx, 1)
-    )
-
-    // add to target column
-    newBoard = newBoard.updateIn(['columns'], columns =>
-      columns.splice(hoverColumnIdx, 0, draggedColumn)
-    )
-
-    this.setState({
-      board: newBoard
-    })
   }
 
   /**
@@ -121,18 +48,18 @@ class Board extends Component {
     const teamId = router.params.teamId
     const boardId = router.params.boardId
 
-    this.setState({
-      isLoading: true
-    })
-
     return fetchBoardById(teamId, boardId)
-      .then(resp => {
-        this.setState({
-          board: fromJS(resp.board),
-          isFetched: true,
-          isLoading: false
-        })
-      })
+  }
+
+  /**
+   * @method findColumnByIdx
+   * @param {Number} columnIdx
+   * @returns {ImmutableMap} column
+   */
+  findColumnByIdx (columnIdx) {
+    const { board } = this.props
+
+    return board.getIn(['columns', columnIdx])
   }
 
   /**
@@ -140,15 +67,15 @@ class Board extends Component {
    * @return {JSX}
    */
   boardRender () {
-    const { isLoading, board } = this.state
-    const { moveColumn, moveCard, findColumnByIdx, loadData } = this
-    const { sendColumnOrder, sendCardOrder, sendCardCreate } = this.props
+    const { findColumnByIdx, loadData } = this
+    const { board, sendColumnOrder, sendCardOrder, sendCardCreate,
+      boardColumnMove, boardCardMove } = this.props
 
     const refetchBoard = () => loadData()
 
-    if (!board && isLoading) {
+    if (!board && board.get('isLoading')) {
       return (<Loader />)
-    } else if (!board) {
+    } else if (!board.get('isFetched')) {
       return
     }
 
@@ -176,9 +103,9 @@ class Board extends Component {
                     column={column}
                     orderColumn={orderColumn}
                     orderCard={orderCard}
-                    moveColumn={moveColumn}
                     findColumnByIdx={findColumnByIdx}
-                    moveCard={moveCard}
+                    moveColumn={boardColumnMove}
+                    moveCard={boardCardMove}
                     sendCardCreate={sendCardCreate}
                     refetchBoard={refetchBoard} />
               )
@@ -217,7 +144,8 @@ Board.displayName = 'Board'
  */
 function mapStateToProps (state) {
   return {
-    router: state.router
+    router: state.router,
+    board: state.board
   }
 }
 
@@ -227,13 +155,15 @@ function mapStateToProps (state) {
  * @return {Object} props
  */
 function mapDispatchToProps (dispatch) {
-  const { fetchBoardById } = actions.board
+  const { fetchBoardById, boardColumnMove, boardCardMove } = actions.board
   const { sendColumnOrder } = actions.column
   const { sendCardOrder, sendCardCreate } = actions.card
 
   return {
     // board
     fetchBoardById: (teamId, boardId) => dispatch(fetchBoardById(teamId, boardId)),
+    boardColumnMove: (dragIndex, hoverIndex) => dispatch(boardColumnMove(dragIndex, hoverIndex)),
+    boardCardMove: (dragIndex, hoverIndex) => dispatch(boardCardMove(dragIndex, hoverIndex)),
 
     // column
     sendColumnOrder: (teamId, boardId, columnId, order) =>
@@ -254,7 +184,10 @@ Board.propTypes = {
       boardId: PropTypes.string.isRequired
     })
   }).isRequired,
+  board: PropTypes.instanceOf(ImmutableMap).isRequired,
   fetchBoardById: PropTypes.func.isRequired,
+  boardCardMove: PropTypes.func.isRequired,
+  boardColumnMove: PropTypes.func.isRequired,
   sendColumnOrder: PropTypes.func.isRequired,
   sendCardOrder: PropTypes.func.isRequired,
   sendCardCreate: PropTypes.func.isRequired
