@@ -40,7 +40,7 @@ config.appKeys = process.env.APP_KEYS ? process.env.APP_KEYS.split(',')
 // auth
 config.jwt = {
   secret: process.env.JWT_SECRET || 'vroYaHLFcW6m6d',
-  ttl: 60 * 60 // 1 hour
+  ttl: 25 * 60 * 60 // 24 * 1 hour
 }
 
 config.password = {
