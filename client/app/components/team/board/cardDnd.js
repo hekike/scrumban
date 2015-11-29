@@ -4,6 +4,8 @@ export const cardTarget = {
   hover (props, monitor, component) {
     const monitorItem = monitor.getItem()
 
+    const boardId = monitorItem.boardId
+
     const dragIndex = {
       cardIdx: monitor.getItem().cardIdx,
       columnIdx: monitor.getItem().columnIdx
@@ -45,7 +47,7 @@ export const cardTarget = {
     }
 
     // Time to actually perform the action
-    props.moveCard(dragIndex, hoverIndex)
+    props.moveCard(boardId, dragIndex, hoverIndex)
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,
@@ -60,6 +62,7 @@ export const cardSource = {
   beginDrag (props) {
     return {
       id: props.id,
+      boardId: props.card.get('boardId'),
       columnIdx: props.columnIdx,
       cardIdx: props.cardIdx
     }

@@ -15,7 +15,7 @@
   </head>
   <body>
     <div id="root" />
-
+    <script src="/mqtt.js"></script>
     {% for (var chunk in o.htmlWebpackPlugin.files.chunks) { %}
     <script src="{%=o.htmlWebpackPlugin.files.chunks[chunk].entry %}"></script>
     {% } %}

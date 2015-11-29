@@ -14,7 +14,6 @@ import Loader from '../components/Loader'
 import actions from '../actions'
 
 class App extends Component {
-
   /**
    * @method componentWillMount
    */
@@ -24,6 +23,13 @@ class App extends Component {
     if (!user.get('isFetched') && !user.get('isLoading')) {
       fetchMe()
     }
+  }
+
+  /**
+   * @method componentWillUnmount
+   */
+  componentWillUnmount () {
+    this.mqttClient.end()
   }
 
   /**
@@ -75,7 +81,8 @@ function mapDispatchToProps (dispatch) {
   return {
     fetchLogout: () => dispatch(fetchLogout()),
     fetchMe: () => dispatch(fetchMe()),
-    pushState: (state, path) => dispatch(pushState(state, path))
+    pushState: (state, path) => dispatch(pushState(state, path)),
+    dispatch: dispatch
   }
 }
 
@@ -87,7 +94,8 @@ App.propTypes = {
   user: PropTypes.instanceOf(ImmutableMap).isRequired,
   fetchLogout: PropTypes.func.isRequired,
   pushState: PropTypes.func.isRequired,
-  fetchMe: PropTypes.func.isRequired
+  fetchMe: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

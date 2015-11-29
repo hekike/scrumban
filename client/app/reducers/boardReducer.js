@@ -3,12 +3,20 @@
 import { fromJS } from 'immutable'
 
 import {
-  BOARD_SET_BOARD_BY_ID,
+  BOARD_SET_ITEM_BY_ID,
   BOARD_CARD_MOVE,
   BOARD_COLUMN_MOVE
 } from '../actions/boardActions'
 
+import {
+  CARD_SET_ORDER
+} from '../actions/cardActions'
+
 const defaultState = fromJS({
+  items: {}
+})
+
+const defaultItem = fromJS({
   id: null,
   isFetched: false,
   isLoading: false
@@ -21,23 +29,22 @@ const defaultState = fromJS({
  * @return {Object} newState
  */
 function oneSetById (state, action) {
-  const { board } = action
+  const { id, item } = action
 
-  if (!board) {
-    return defaultState
+  if (!item) {
+    return state
+      .setIn(['items', id], defaultItem)
+      .setIn(['items', id, 'id'], id)
   }
 
-  if (board && board.isLoading) {
-    return state.setIn(['isLoading'], true)
+  if (item && item.isLoading) {
+    return state.setIn(['items', id, 'isLoading'], true)
   }
 
-  const immutableBoard = fromJS(board)
-  let nextState = state.merge(immutableBoard)
-
-  nextState = nextState.setIn(['isFetched'], true)
-  nextState = nextState.setIn(['isLoading'], false)
-
-  return nextState
+  return state
+    .mergeIn(['items', id], fromJS(item))
+    .setIn(['items', id, 'isFetched'], true)
+    .setIn(['items', id, 'isLoading'], false)
 }
 
 /**
@@ -47,7 +54,7 @@ function oneSetById (state, action) {
  * @return {Object} newState
  */
 function onBoardCardMove (state, action) {
-  const { dragIndex, hoverIndex } = action
+  const { id, dragIndex, hoverIndex } = action
 
   const dragColumnIdx = dragIndex.columnIdx
   const hoverColumnIdx = hoverIndex.columnIdx
@@ -56,19 +63,18 @@ function onBoardCardMove (state, action) {
   const hoverCardIdx = hoverIndex.cardIdx
 
   // dragged card
-  let draggedCard = state.getIn(['columns', dragColumnIdx, 'cards', dragCardIdx])
+  let draggedCard = state.getIn(['items', id, 'columns', dragColumnIdx, 'cards', dragCardIdx])
 
   // remove from source column
-  let newState = state.updateIn(['columns', dragColumnIdx, 'cards'], cards =>
-    cards.splice(dragCardIdx, 1)
-  )
+  return state
+    .updateIn(['items', id, 'columns', dragColumnIdx, 'cards'], cards =>
+      cards.splice(dragCardIdx, 1)
+    )
 
-  // add to target column
-  newState = newState.updateIn(['columns', hoverColumnIdx, 'cards'], cards =>
+    // add to target column
+    .updateIn(['items', id, 'columns', hoverColumnIdx, 'cards'], cards =>
     cards.splice(hoverCardIdx, 0, draggedCard)
   )
-
-  return newState
 }
 
 /**
@@ -78,30 +84,39 @@ function onBoardCardMove (state, action) {
  * @return {Object} newState
  */
 function onBoardColumnMove (state, action) {
-  const { dragIndex, hoverIndex } = action
+  const { id, dragIndex, hoverIndex } = action
 
   const dragColumnIdx = dragIndex.columnIdx
   const hoverColumnIdx = hoverIndex.columnIdx
 
   // dragged column
-  let draggedColumn = state.getIn(['columns', dragColumnIdx])
+  let draggedColumn = state.getIn(['items', id, 'columns', dragColumnIdx])
 
   // remove from source column
-  let newState = state.updateIn(['columns'], columns =>
-    columns.splice(dragColumnIdx, 1)
-  )
+  return state
+    .updateIn(['items', id, 'columns'], columns =>
+      columns.splice(dragColumnIdx, 1)
+    )
 
-  // add to target column
-  newState = newState.updateIn(['columns'], columns =>
-    columns.splice(hoverColumnIdx, 0, draggedColumn)
-  )
+    // add to target column
+    .updateIn(['items', id, 'columns'], columns =>
+      columns.splice(hoverColumnIdx, 0, draggedColumn)
+    )
+}
 
-  return newState
+/**
+ * @method onCardSetOrder
+ * @param {Object} state
+ * @param {Object} action
+ * @return {Object} newState
+ */
+function onCardSetOrder (state, action) {
+  return state
 }
 
 export default function (state = defaultState, action) {
   switch (action.type) {
-    case BOARD_SET_BOARD_BY_ID:
+    case BOARD_SET_ITEM_BY_ID:
       return oneSetById(state, action)
 
     case BOARD_CARD_MOVE:
@@ -109,6 +124,9 @@ export default function (state = defaultState, action) {
 
     case BOARD_COLUMN_MOVE:
       return onBoardColumnMove(state, action)
+
+    case CARD_SET_ORDER:
+      return onCardSetOrder(state, action)
 
     default:
       return state

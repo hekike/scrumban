@@ -1,5 +1,6 @@
 'use strict'
 
+import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
 import config from '../../../config/client'
 import { checkFetchStatus, handleError, parseFetchJSON } from './fetchHelper'
@@ -14,9 +15,10 @@ const CARD_URL = 'card'
 /**
  * @method setOrder
  * @param {Object} order
+ * @param {Object} order
  * @return {Object} action
  */
-function setOrder (order) {
+function setOrder (id, order) {
   return {
     type: CARD_SET_ORDER,
     order
@@ -44,10 +46,13 @@ function createCard (card) {
  * @return {Promise}
  */
 export function sendCardOrder (teamId, boardId, cardId, order) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(setOrder({
       isLoading: true
     }))
+
+    const state = getState()
+    const clientId = state.app.get('clientId')
 
     const url = `${TEAM_URL}/${teamId}/${BOARD_URL}/${boardId}/${CARD_URL}/${cardId}/order`
 
@@ -60,6 +65,7 @@ export function sendCardOrder (teamId, boardId, cardId, order) {
       },
       body: JSON.stringify({
         data: {
+          clientId,
           columnId: order.targetColumnId,
           orderIndex: order.targetCard
         }
@@ -79,10 +85,13 @@ export function sendCardOrder (teamId, boardId, cardId, order) {
  * @return {Promise}
  */
 export function sendCardCreate (teamId, boardId, data) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(createCard({
       isLoading: true
     }))
+
+    const state = getState()
+    const clientId = state.app.get('clientId')
 
     const url = `${TEAM_URL}/${teamId}/${BOARD_URL}/${boardId}/${CARD_URL}`
 
@@ -94,7 +103,9 @@ export function sendCardCreate (teamId, boardId, data) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        data: data
+        data: _.merge({}, data, {
+          clientId
+        })
       })
     })
       .then(checkFetchStatus)

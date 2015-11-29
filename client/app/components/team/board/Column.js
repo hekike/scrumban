@@ -15,6 +15,8 @@ const dndTarget = {
   hover (props, monitor, component) {
     const monitorItem = monitor.getItem()
 
+    const boardId = monitorItem.boardId
+
     const dragIndex = {
       columnIdx: monitor.getItem().columnIdx
     }
@@ -54,7 +56,7 @@ const dndTarget = {
     }
 
     // Time to actually perform the action
-    props.moveColumn(dragIndex, hoverIndex)
+    props.moveColumn(boardId, dragIndex, hoverIndex)
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,
@@ -68,6 +70,7 @@ const dndSource = {
   beginDrag (props) {
     return {
       id: props.id,
+      boardId: props.column.get('boardId'),
       columnIdx: props.columnIdx,
       originalColumnIdx: props.columnIdx
     }

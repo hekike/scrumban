@@ -1,6 +1,7 @@
 'use strict'
 
 import { fromJS } from 'immutable'
+import uuid from 'uuid'
 
 import {
   APP_ERROR,
@@ -8,7 +9,8 @@ import {
 } from '../actions/appActions'
 
 const defaultState = fromJS({
-  error: null
+  error: null,
+  clientId: uuid.v4() // used by mqtt
 })
 
 /**

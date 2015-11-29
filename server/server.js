@@ -13,6 +13,7 @@ const logger = require('winston')
 const config = require('../config/server')
 const serverUtils = require('./utils/server')
 const routes = require('./routes')
+const mqttBroker = require('./models/broker')
 
 const NINETY_DAYS_IN_MS = 90 * 24 * 60 * 60 * 1000
 const PATH_ASSETS = path.join(__dirname, '../dist')
@@ -21,6 +22,7 @@ const indexFile = path.join(config.isTest ? PATH_CLIENT : PATH_ASSETS, 'index.ht
 
 const app = koa()
 const serveMW = serve(PATH_ASSETS, config.static)
+const serveMqttMW = serve(path.dirname(require.resolve('mosca')) + '/public')
 
 // config app and middlewares
 app.keys = config.appKeys
@@ -30,6 +32,7 @@ app.use(serverUtils.favicon)
 app.use(serverUtils.errorHandler)
 
 app.use(serverUtils.conditionalMw(/^\/[images|css|scripts]/, serveMW))
+app.use(serverUtils.conditionalMw(/mqtt.js$/, serveMqttMW))
 
 // routers
 app.use(routes.public.middleware())
@@ -59,6 +62,7 @@ app.use(helmet.hsts({
 // kick off server
 if (!module.parent) {
   let server = http.createServer(app.callback())
+  mqttBroker.attachHttpServer(server)
 
   server.listen(config.port, function (err) {
     if (err) {

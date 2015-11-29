@@ -12,6 +12,8 @@ import actions from '../../../actions'
 import Loader from '../../../components/Loader'
 import Column from '../../../components/team/board/Column'
 
+const mqtt = global.mqtt
+
 /**
 * @class Board
 */
@@ -22,22 +24,52 @@ class Board extends Component {
     this.boardRender = this.boardRender.bind(this)
     this.loadData = this.loadData.bind(this)
     this.findColumnByIdx = this.findColumnByIdx.bind(this)
+
+    this.mqttClient = null
   }
 
   /**
    * @method componentWillMount
    */
   componentWillMount () {
-    const { board, router } = this.props
+    const { board, router, app } = this.props
     const { loadData } = this
     const boardId = router.params.boardId
 
+    // TODO: use real authentication
+    this.mqttClient = mqtt.connect(null, {
+      clientId: app.get('clientId'),
+      username: 'test',
+      password: 'test'
+    })
+
+    // initial data fetch
     const needToFetch = !board.get('isFetched')
     const isDifferentBoard = board && board.get('id') !== boardId
 
     if ((needToFetch || isDifferentBoard) || !board.get('isLoading')) {
       loadData()
     }
+
+    // subscribe for board changes
+    if (this.mqttClient) {
+      const topicId = `board/${boardId}`
+      this.mqttClient.subscribe(topicId)
+
+      this.mqttClient.on('message', (topic, payload) => {
+        const data = JSON.parse(payload.toString())
+        if (topic === topicId && data.clientId !== app.get('clientId')) {
+          loadData()
+        }
+      })
+    }
+  }
+
+  /**
+   * @method componentWillUnmount
+   */
+  componentWillUnmount () {
+    this.mqttClient.end()
   }
 
   /**
@@ -143,9 +175,12 @@ Board.displayName = 'Board'
  * @return {Object} props
  */
 function mapStateToProps (state) {
+  const boardId = state.router.params.boardId
+
   return {
     router: state.router,
-    board: state.board
+    app: state.app,
+    board: state.board.getIn(['items', boardId])
   }
 }
 
@@ -162,8 +197,8 @@ function mapDispatchToProps (dispatch) {
   return {
     // board
     fetchBoardById: (teamId, boardId) => dispatch(fetchBoardById(teamId, boardId)),
-    boardColumnMove: (dragIndex, hoverIndex) => dispatch(boardColumnMove(dragIndex, hoverIndex)),
-    boardCardMove: (dragIndex, hoverIndex) => dispatch(boardCardMove(dragIndex, hoverIndex)),
+    boardColumnMove: (boardId, dragIndex, hoverIndex) => dispatch(boardColumnMove(boardId, dragIndex, hoverIndex)),
+    boardCardMove: (boardId, dragIndex, hoverIndex) => dispatch(boardCardMove(boardId, dragIndex, hoverIndex)),
 
     // column
     sendColumnOrder: (teamId, boardId, columnId, order) =>
@@ -184,6 +219,7 @@ Board.propTypes = {
       boardId: PropTypes.string.isRequired
     })
   }).isRequired,
+  app: PropTypes.instanceOf(ImmutableMap).isRequired,
   board: PropTypes.instanceOf(ImmutableMap).isRequired,
   fetchBoardById: PropTypes.func.isRequired,
   boardCardMove: PropTypes.func.isRequired,

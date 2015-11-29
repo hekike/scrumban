@@ -30,7 +30,8 @@ const vendors = [
   'immutable',
   'react-bootstrap',
   'react-dnd',
-  'react-dnd-html5-backend'
+  'react-dnd-html5-backend',
+  'uuid'
 ]
 
 const entry = {

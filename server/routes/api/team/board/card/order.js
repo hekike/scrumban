@@ -3,6 +3,7 @@
 const logger = require('winston')
 const Card = require('../../../../../models/card')
 const thinky = require('../../../../../models/thinky')
+const broker = require('../../../../../models/broker')
 const routesUtils = require('../../../../../utils/routes')
 const schema = require('./schema').order
 const Errors = thinky.Errors
@@ -11,7 +12,7 @@ const r = thinky.r
 /**
 * Card order
 */
-module.exports = function *() {
+module.exports = function *(next) {
   const body = yield routesUtils.joiValidate(this, schema)
   const cardId = this.params.cardId
   const teamId = this.params.teamId
@@ -120,4 +121,18 @@ module.exports = function *() {
   }
 
   this.status = 204
+
+  yield next
+
+  // emit to
+  broker.publish({
+    topic: 'board/change',
+    payload: JSON.stringify({
+      type: 'CARD_SET_ORDER',
+      id: boardId,
+      clientId: body.data.clientId,
+      orderIndex: body.data.orderIndex,
+      columnId: body.data.columnId
+    })
+  })
 }

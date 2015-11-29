@@ -29,10 +29,13 @@ function setOrder (order) {
  * @return {Promise}
  */
 export function sendColumnOrder (teamId, boardId, columnId, order) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(setOrder({
       isLoading: true
     }))
+
+    const state = getState()
+    const clientId = state.app.get('clientId')
 
     const url = `${TEAM_URL}/${teamId}/${BOARD_URL}/${boardId}/${COLUMN_URL}/${columnId}/order`
 
@@ -45,6 +48,7 @@ export function sendColumnOrder (teamId, boardId, columnId, order) {
       },
       body: JSON.stringify({
         data: {
+          clientId,
           orderIndex: order.target
         }
       })
