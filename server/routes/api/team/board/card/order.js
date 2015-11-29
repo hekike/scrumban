@@ -122,8 +122,6 @@ module.exports = function *(next) {
 
   this.status = 204
 
-  yield next
-
   // emit to
   broker.publish({
     topic: 'board/change',
