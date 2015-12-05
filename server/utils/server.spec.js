@@ -34,7 +34,11 @@ describe('Utils server', function () {
       })
 
       expect(ctx).property('status', 500)
-      expect(ctx.body).to.be.eql({ error: 'my error', statusCode: 500 })
+      expect(ctx.body).to.be.eql({
+        error: 'Internal Server Error',
+        message: 'my error',
+        statusCode: 500
+      })
       expect(emitSpy).to.be.calledWith('error', err, ctx)
     })
   })

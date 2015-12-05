@@ -1,5 +1,7 @@
 'use strict'
 
+const HTTPStatus = require('http-status')
+
 /**
  * @method favicon
  * @param {Generator} next
@@ -35,9 +37,13 @@ function * errorHandler (next) {
   try {
     yield next
   } catch (err) {
-    var body = {
-      error: err.code ? 'Error happened' : err.message,
-      statusCode: err.status || 500
+    let statusCode = err.status || 500
+
+    // format this.throw(statusCode, errorMsg) to response
+    let body = {
+      error: HTTPStatus[statusCode],
+      message: err.code ? 'Error happened' : err.message,
+      statusCode: statusCode
     }
 
     // joi error
@@ -45,7 +51,9 @@ function * errorHandler (next) {
       body.reason = err.reason
     }
 
-    // console.log(err)
+    if (statusCode > 499) {
+      console.log(err)
+    }
 
     this.status = body.statusCode
     this.body = body

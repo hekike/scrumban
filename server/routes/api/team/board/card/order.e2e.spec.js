@@ -5,6 +5,7 @@ const expect = require('chai').expect
 
 const server = require('../../../../../server')
 const Card = require('../../../../../models/card')
+const broker = require('../../../../../models/broker')
 
 const userFixtures = require('../../../../../fixtures/user')
 const teamFixtures = require('../../../../../fixtures/team')
@@ -20,6 +21,8 @@ describe('PUT /api/team/:teamId/board/:boardId/card/:cardId/order', function () 
 
   beforeEach(function *() {
     const result = yield userFixtures.createLoggedInUser()
+
+    this.sandbox.stub(broker, 'publish').returns()
 
     user = result.user
     token = result.token
